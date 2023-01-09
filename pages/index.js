@@ -1,7 +1,11 @@
-import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import Head from "next/head";
+import { useState } from "react";
+import PollForm from "../components/poll-form";
+import PollLayout from "../components/poll-layout";
 
 export default function Home() {
+  const [colorScheme, setColorScheme] = useState("purple");
   return (
     <>
       <Head>
@@ -10,8 +14,15 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Flex as={"main"}>
-        <Heading>Hello World</Heading>
+      <Flex
+        as={"main"}
+        h={"100vh"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <PollLayout>
+          <PollForm colorScheme={colorScheme} />
+        </PollLayout>
       </Flex>
     </>
   );
