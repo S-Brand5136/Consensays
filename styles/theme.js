@@ -4,7 +4,14 @@ const theme = extendTheme({
   config: {
     initialColorMode: "light",
   },
-  colors: {},
+  styles: {
+    global: {
+      "html, body": {
+        color: "gray.600",
+      },
+    },
+  },
+  textStyles: {},
   components: {
     Button: {
       variants: {

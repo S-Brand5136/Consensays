@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import { IoMdArrowDropright, IoMdArrowDropdown } from "react-icons/io";
 
-const PollForm = ({ colorScheme }) => {
+const PollForm = ({ colorScheme, setPollSaved }) => {
   // State
   const [options, setOptions] = useState([
     {
@@ -88,7 +88,7 @@ const PollForm = ({ colorScheme }) => {
   };
 
   const saveHandler = () => {
-    console.log("clicked");
+    setPollSaved();
   };
 
   return (

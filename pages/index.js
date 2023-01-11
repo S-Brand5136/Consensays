@@ -1,11 +1,15 @@
-import { Flex } from "@chakra-ui/react";
+import { Button, color, Flex } from "@chakra-ui/react";
 import Head from "next/head";
 import { useState } from "react";
-import PollForm from "../components/poll-form";
-import PollLayout from "../components/poll-layout";
+import PollForm from "../components/PollCard/poll-form";
+import PollLayout from "../components/PollCard/poll-layout";
+import PollUser from "../components/PollCard/poll-user";
+import { AiOutlineArrowLeft } from "react-icons/ai";
 
 export default function Home() {
   const [colorScheme, setColorScheme] = useState("purple");
+  const [pollSaved, setPollSaved] = useState(false);
+
   return (
     <>
       <Head>
@@ -19,9 +23,32 @@ export default function Home() {
         h={"100vh"}
         justifyContent={"center"}
         alignItems={"center"}
+        flexDir={"column"}
+        gap={5}
       >
-        <PollLayout>
-          <PollForm colorScheme={colorScheme} />
+        {pollSaved && (
+          <Button
+            onClick={() => setPollSaved(false)}
+            display={"flex"}
+            boxShadow={"1px 2px 5px gray"}
+            gap={2}
+            colorScheme={colorScheme}
+          >
+            <AiOutlineArrowLeft /> Edit Options
+          </Button>
+        )}
+        <PollLayout pollSaved={pollSaved}>
+          {!pollSaved ? (
+            <PollForm
+              colorScheme={colorScheme}
+              setPollSaved={() => setPollSaved(true)}
+            />
+          ) : (
+            <PollUser
+              colorScheme={colorScheme}
+              setPollSaved={() => setPollSaved(false)}
+            />
+          )}
         </PollLayout>
       </Flex>
     </>
