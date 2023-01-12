@@ -8,6 +8,7 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 
 export default function Home() {
   const [colorScheme, setColorScheme] = useState("purple");
+  const [background, setBackground] = useState(null);
   const [pollSaved, setPollSaved] = useState(false);
 
   return (
@@ -25,6 +26,9 @@ export default function Home() {
         alignItems={"center"}
         flexDir={"column"}
         gap={5}
+        background={`url(${background})`}
+        backgroundSize={"cover"}
+        backgroundRepeat={"no-repeat"}
       >
         {pollSaved && (
           <Button
@@ -40,6 +44,7 @@ export default function Home() {
         <PollLayout pollSaved={pollSaved}>
           {!pollSaved ? (
             <PollForm
+              setBackground={(path) => setBackground(path)}
               colorScheme={colorScheme}
               setPollSaved={() => setPollSaved(true)}
             />

@@ -6,19 +6,23 @@ import {
   Box,
   Button,
   Checkbox,
-  color,
   Divider,
   Flex,
   Input,
   InputGroup,
   InputRightElement,
+  SimpleGrid,
+  Slide,
   Stack,
+  useDisclosure,
 } from "@chakra-ui/react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import { IoMdArrowDropright, IoMdArrowDropdown } from "react-icons/io";
+import { backgrounds } from "../../constants/backgrounds";
 
-const PollForm = ({ colorScheme, setPollSaved }) => {
+const PollForm = ({ colorScheme, setPollSaved, setBackground }) => {
   // State
   const [options, setOptions] = useState([
     {
@@ -36,6 +40,7 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
     hideVotes: false,
     anonymousVotes: false,
   });
+  const { isOpen, onToggle } = useDisclosure();
 
   // Use Effect
   useEffect(() => {
@@ -218,6 +223,68 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
           )}
         </AccordionItem>
       </Accordion>
+      <Divider borderWidth={"1px"} />
+      <Button
+        paddingY={"1.5rem"}
+        colorScheme={colorScheme}
+        mt={4}
+        zIndex={2000}
+        onClick={onToggle}
+      >
+        Background
+      </Button>
+      <Slide direction={"right"} in={isOpen}>
+        <SimpleGrid
+          position={"absolute"}
+          right={0}
+          top={"15.5rem"}
+          left={"50rem"}
+          marginLeft={"auto"}
+          marginRight={"auto"}
+          width={"20rem"}
+          h={"20rem"}
+          overflowY={"scroll"}
+          p='40px'
+          bg='white'
+          rounded='md'
+          boxShadow={"1px 2px 5px gray"}
+          columns={2}
+          gap={5}
+        >
+          <Box
+            background={"#F8F8F8"}
+            _hover={{
+              background: "#F8F8F8",
+              cursor: "pointer",
+              boxShadow: "1px 1px 2px #d9d9d9 inset",
+            }}
+            onClick={() => setBackground(null)}
+            padding={2}
+          >
+            <Image src='' alt={""} width={100} height={50} />
+          </Box>
+          {backgrounds.map((item, id) => (
+            <Box
+              onClick={() => setBackground(item.path)}
+              _hover={{
+                background: "#F8F8F8",
+                cursor: "pointer",
+                boxShadow: "1px 1px 2px #d9d9d9 inset",
+              }}
+              padding={2}
+              key={id}
+            >
+              <Image
+                key={id}
+                width={100}
+                height={50}
+                src={item.path}
+                alt={item.title}
+              />
+            </Box>
+          ))}
+        </SimpleGrid>
+      </Slide>
       {/* Save button */}
       <Button
         disabled={saveDisabled}
