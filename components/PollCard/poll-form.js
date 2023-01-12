@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Checkbox,
+  color,
   Divider,
   Flex,
   Input,
@@ -53,7 +54,7 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
 
   // Handlers
   const addOptionHandler = () => {
-    setSaveDisabled(false);
+    setSaveDisabled(true);
 
     const newArr = [
       ...options,
@@ -108,6 +109,8 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
         letterSpacing={"0.05em"}
         marginBottom={5}
         colorScheme={"yellow"}
+        _focus={{ borderColor: colorScheme, outline: "none" }}
+        _focusVisible={{ boxShadow: `0px 1px 0px 0px ${colorScheme}` }}
       />
       {/* options */}
       <Flex
@@ -126,7 +129,8 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
               id={"option" + id}
               value={question}
               onChange={(e) => inputHandler(e, index)}
-              colorScheme={colorScheme}
+              _focus={{ borderColor: colorScheme, outline: "none" }}
+              _focusVisible={{ boxShadow: `0 0 0 1px ${colorScheme}` }}
               variant={"outline"}
             />
             {options.length > 2 && (
@@ -169,16 +173,16 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
                   fontWeight={"semibold"}
                 >
                   {isExpanded ? (
-                    <IoMdArrowDropdown fontSize="1.25em" />
+                    <IoMdArrowDropdown fontSize='1.25em' />
                   ) : (
-                    <IoMdArrowDropright fontSize="1.25em" />
+                    <IoMdArrowDropright fontSize='1.25em' />
                   )}
                   <Box
-                    as="span"
+                    as='span'
                     marginLeft={3}
                     fontSize={"1.1em"}
-                    flex="1"
-                    textAlign="left"
+                    flex='1'
+                    textAlign='left'
                   >
                     Settings{" "}
                   </Box>
@@ -187,6 +191,7 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
               <AccordionPanel padding={0}>
                 <Stack spacing={2} paddingTop={2}>
                   <Checkbox
+                    colorScheme={colorScheme}
                     isChecked={settings.hideVotes}
                     onChange={(e) =>
                       setSettings((curr) => {
@@ -197,6 +202,7 @@ const PollForm = ({ colorScheme, setPollSaved }) => {
                     Hide votes until poll ends
                   </Checkbox>
                   <Checkbox
+                    colorScheme={colorScheme}
                     isChecked={settings.anonymousVotes}
                     onChange={(e) =>
                       setSettings((curr) => {
