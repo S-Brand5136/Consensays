@@ -11,6 +11,10 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   SimpleGrid,
   Slide,
   Stack,
@@ -18,11 +22,20 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
+import {
+  AiOutlinePlus,
+  AiOutlineClose,
+  AiOutlineBgColors,
+} from "react-icons/ai";
 import { IoMdArrowDropright, IoMdArrowDropdown } from "react-icons/io";
 import { backgrounds } from "../../constants/backgrounds";
 
-const PollForm = ({ colorScheme, setPollSaved, setBackground }) => {
+const PollForm = ({
+  colorScheme,
+  setColorScheme,
+  setPollSaved,
+  setBackground,
+}) => {
   // State
   const [options, setOptions] = useState([
     {
@@ -158,9 +171,32 @@ const PollForm = ({ colorScheme, setPollSaved, setBackground }) => {
       </Flex>
       {/* add option */}
       <Button variant={"iconLeft"} onClick={addOptionHandler}>
-        <AiOutlinePlus fontSize={"1.25em"} /> Add option
+        <AiOutlinePlus fontSize={"1.25em"} />
+        Add option
       </Button>
       <Divider borderWidth={"1px"} />
+      <Menu>
+        <MenuButton
+          padding={0}
+          background={"transparent"}
+          _hover={{ background: "transparent", opacity: 1 }}
+          _active={{ background: "transparent", opacity: 0.75 }}
+          opacity={0.5}
+          textAlign={"left"}
+          as={Button}
+        >
+          <Flex gap={3}>
+            <AiOutlineBgColors fontSize={"1.25em"} /> Color Scheme
+          </Flex>
+        </MenuButton>
+        <MenuList zIndex={11}>
+          <MenuItem onClick={() => setColorScheme("green")}>Green</MenuItem>
+          <MenuItem onClick={() => setColorScheme("purple")}>Purple</MenuItem>
+          <MenuItem onClick={() => setColorScheme("blue")}>Blue</MenuItem>
+          <MenuItem onClick={() => setColorScheme("yellow")}>Yellow</MenuItem>
+          <MenuItem onClick={() => setColorScheme("pink")}>Pink</MenuItem>
+        </MenuList>
+      </Menu>
       {/* settings */}
       <Accordion allowToggle>
         <AccordionItem
@@ -228,7 +264,7 @@ const PollForm = ({ colorScheme, setPollSaved, setBackground }) => {
         paddingY={"1.5rem"}
         colorScheme={colorScheme}
         mt={4}
-        zIndex={2000}
+        zIndex={10}
         onClick={onToggle}
       >
         Background

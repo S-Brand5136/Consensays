@@ -6,6 +6,7 @@ const PollLayout = ({ children, pollSaved }) => {
     <Flex
       flexDirection={"column"}
       boxShadow={"1px 2px 5px gray"}
+      background={"white"}
       minW={"sm"}
       borderRadius={8}
       paddingY={5}

@@ -6,18 +6,18 @@ const PollUser = ({ colorScheme }) => {
   return (
     <>
       <Heading
-        paddingX={4}
+        paddingX={7}
         fontWeight={"semibold"}
         letterSpacing={0.25}
         paddingBottom={6}
       >
         asdasd
       </Heading>
-      <SimpleGrid gap={10} paddingX={2} paddingBottom={6}>
+      <SimpleGrid gap={10} paddingX={4} paddingBottom={6}>
         <PollOptionItem colorScheme={colorScheme} text={"asd"} />
         <PollOptionItem colorScheme={colorScheme} text={"asd"} />
       </SimpleGrid>
-      <Text paddingX={4}>1 vote</Text>
+      <Text paddingX={7}>1 vote</Text>
     </>
   );
 };

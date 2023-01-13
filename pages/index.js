@@ -46,6 +46,7 @@ export default function Home() {
             <PollForm
               setBackground={(path) => setBackground(path)}
               colorScheme={colorScheme}
+              setColorScheme={(newScheme) => setColorScheme(newScheme)}
               setPollSaved={() => setPollSaved(true)}
             />
           ) : (
