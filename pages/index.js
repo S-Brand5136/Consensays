@@ -50,10 +50,7 @@ export default function Home() {
               setPollSaved={() => setPollSaved(true)}
             />
           ) : (
-            <PollUser
-              colorScheme={colorScheme}
-              setPollSaved={() => setPollSaved(false)}
-            />
+            <PollUser setPollSaved={() => setPollSaved(false)} />
           )}
         </PollLayout>
       </Flex>
