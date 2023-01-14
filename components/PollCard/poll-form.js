@@ -15,20 +15,16 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  SimpleGrid,
-  Slide,
   Stack,
-  useDisclosure,
 } from "@chakra-ui/react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   AiOutlinePlus,
   AiOutlineClose,
   AiOutlineBgColors,
 } from "react-icons/ai";
-import { IoMdArrowDropright, IoMdArrowDropdown } from "react-icons/io";
-import { backgrounds } from "../../constants/backgrounds";
+import AccordionLayout from "../accordion-layout";
+import PollBackgroundCard from "./poll-background-card";
 
 const PollForm = ({
   colorScheme,
@@ -53,7 +49,6 @@ const PollForm = ({
     hideVotes: false,
     anonymousVotes: false,
   });
-  const { isOpen, onToggle } = useDisclosure();
 
   // Use Effect
   useEffect(() => {
@@ -174,7 +169,35 @@ const PollForm = ({
         <AiOutlinePlus fontSize={"1.25em"} />
         Add option
       </Button>
+      {/* settings */}
+      <AccordionLayout title={"Settings"}>
+        <Stack spacing={2} paddingTop={2}>
+          <Checkbox
+            colorScheme={colorScheme}
+            isChecked={settings.hideVotes}
+            onChange={(e) =>
+              setSettings((curr) => {
+                return { ...curr, hideVotes: e.target.checked };
+              })
+            }
+          >
+            Hide votes until poll ends
+          </Checkbox>
+          <Checkbox
+            colorScheme={colorScheme}
+            isChecked={settings.anonymousVotes}
+            onChange={(e) =>
+              setSettings((curr) => {
+                return { ...curr, anonymousVotes: e.target.checked };
+              })
+            }
+          >
+            Anonymous votes
+          </Checkbox>
+        </Stack>
+      </AccordionLayout>
       <Divider borderWidth={"1px"} />
+      {/* color scheme */}
       <Menu>
         <MenuButton
           padding={0}
@@ -190,137 +213,17 @@ const PollForm = ({
           </Flex>
         </MenuButton>
         <MenuList zIndex={11}>
-          <MenuItem onClick={() => setColorScheme("green")}>Green</MenuItem>
-          <MenuItem onClick={() => setColorScheme("purple")}>Purple</MenuItem>
+          <MenuItem onClick={() => setColorScheme("green")}> Green</MenuItem>
+          <MenuItem onClick={() => setColorScheme("purple")}> Purple</MenuItem>
           <MenuItem onClick={() => setColorScheme("blue")}>Blue</MenuItem>
           <MenuItem onClick={() => setColorScheme("yellow")}>Yellow</MenuItem>
           <MenuItem onClick={() => setColorScheme("pink")}>Pink</MenuItem>
         </MenuList>
       </Menu>
-      {/* settings */}
-      <Accordion allowToggle>
-        <AccordionItem
-          _after={{ borderStyle: "hidden" }}
-          _before={{ borderStyle: "hidden" }}
-          borderStyle={"hidden"}
-        >
-          {({ isExpanded }) => (
-            <>
-              <h2>
-                <AccordionButton
-                  _hover={{ opacity: 1 }}
-                  opacity={!isExpanded ? "0.5" : 1}
-                  padding={0}
-                  fontWeight={"semibold"}
-                >
-                  {isExpanded ? (
-                    <IoMdArrowDropdown fontSize='1.25em' />
-                  ) : (
-                    <IoMdArrowDropright fontSize='1.25em' />
-                  )}
-                  <Box
-                    as='span'
-                    marginLeft={3}
-                    fontSize={"1.1em"}
-                    flex='1'
-                    textAlign='left'
-                  >
-                    Settings{" "}
-                  </Box>
-                </AccordionButton>
-              </h2>
-              <AccordionPanel padding={0}>
-                <Stack spacing={2} paddingTop={2}>
-                  <Checkbox
-                    colorScheme={colorScheme}
-                    isChecked={settings.hideVotes}
-                    onChange={(e) =>
-                      setSettings((curr) => {
-                        return { ...curr, hideVotes: e.target.checked };
-                      })
-                    }
-                  >
-                    Hide votes until poll ends
-                  </Checkbox>
-                  <Checkbox
-                    colorScheme={colorScheme}
-                    isChecked={settings.anonymousVotes}
-                    onChange={(e) =>
-                      setSettings((curr) => {
-                        return { ...curr, anonymousVotes: e.target.checked };
-                      })
-                    }
-                  >
-                    Anonymous votes
-                  </Checkbox>
-                </Stack>
-              </AccordionPanel>
-            </>
-          )}
-        </AccordionItem>
-      </Accordion>
-      <Divider borderWidth={"1px"} />
-      <Button
-        paddingY={"1.5rem"}
-        colorScheme={colorScheme}
-        mt={4}
-        zIndex={10}
-        onClick={onToggle}
-      >
-        Background
-      </Button>
-      <Slide direction={"right"} in={isOpen}>
-        <SimpleGrid
-          position={"absolute"}
-          right={0}
-          top={"15.5rem"}
-          left={"50rem"}
-          marginLeft={"auto"}
-          marginRight={"auto"}
-          width={"20rem"}
-          h={"20rem"}
-          overflowY={"scroll"}
-          p='40px'
-          bg='white'
-          rounded='md'
-          boxShadow={"1px 2px 5px gray"}
-          columns={2}
-          gap={5}
-        >
-          <Box
-            background={"#F8F8F8"}
-            _hover={{
-              background: "#F8F8F8",
-              cursor: "pointer",
-              boxShadow: "1px 1px 2px #d9d9d9 inset",
-            }}
-            onClick={() => setBackground(null)}
-            padding={2}
-          >
-            <Image src='' alt={""} width={100} height={50} />
-          </Box>
-          {backgrounds.map((item, id) => (
-            <Box
-              onClick={() => setBackground(item.path)}
-              _hover={{
-                background: "#F8F8F8",
-                cursor: "pointer",
-                boxShadow: "1px 1px 2px #d9d9d9 inset",
-              }}
-              padding={2}
-              key={id}
-            >
-              <Image
-                key={id}
-                width={100}
-                height={50}
-                src={item.path}
-                alt={item.title}
-              />
-            </Box>
-          ))}
-        </SimpleGrid>
-      </Slide>
+      {/* Background */}
+      <PollBackgroundCard
+        setBackground={(background) => setBackground(background)}
+      />
       {/* Save button */}
       <Button
         disabled={saveDisabled}
