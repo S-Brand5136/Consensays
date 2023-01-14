@@ -1,8 +1,10 @@
 import { Heading, SimpleGrid, Text } from "@chakra-ui/react";
-import React from "react";
 import PollOptionItem from "./poll-option-item";
+import useStore from "../../store/store";
 
-const PollUser = ({ colorScheme }) => {
+const PollUser = () => {
+  const { options, pollTitle, colorScheme } = useStore();
+
   return (
     <>
       <Heading
@@ -11,11 +13,16 @@ const PollUser = ({ colorScheme }) => {
         letterSpacing={0.25}
         paddingBottom={6}
       >
-        asdasd
+        {pollTitle}
       </Heading>
       <SimpleGrid gap={10} paddingX={4} paddingBottom={6}>
-        <PollOptionItem colorScheme={colorScheme} text={"asd"} />
-        <PollOptionItem colorScheme={colorScheme} text={"asd"} />
+        {options.map((option) => (
+          <PollOptionItem
+            colorScheme={colorScheme}
+            key={option.id}
+            text={option.question}
+          />
+        ))}
       </SimpleGrid>
       <Text paddingX={7}>1 vote</Text>
     </>

@@ -104,6 +104,7 @@ const PollForm = ({ setPollSaved, setBackground }) => {
         colorScheme={"yellow"}
         _focus={{ borderColor: colorScheme, outline: "none" }}
         _focusVisible={{ boxShadow: `0px 1px 0px 0px ${colorScheme}` }}
+        id={"poll-title"}
       />
       {/* options */}
       <Flex
@@ -113,6 +114,7 @@ const PollForm = ({ setPollSaved, setBackground }) => {
         justifyContent={"center"}
         alignItems={"center"}
         gap={3}
+        id={"options-container"}
       >
         {options.map(({ question, id }, index) => (
           <InputGroup key={id}>
@@ -145,7 +147,7 @@ const PollForm = ({ setPollSaved, setBackground }) => {
         ))}
       </Flex>
       {/* add option */}
-      <Button variant={"iconLeft"} onClick={addOptionHandler}>
+      <Button variant={"iconLeft"} id={"option-btn"} onClick={addOptionHandler}>
         <AiOutlinePlus fontSize={"1.25em"} />
         Add option
       </Button>
@@ -215,6 +217,7 @@ const PollForm = ({ setPollSaved, setBackground }) => {
         colorScheme={colorScheme}
         mt={4}
         onClick={saveHandler}
+        id={"save-btn"}
       >
         Save
       </Button>
