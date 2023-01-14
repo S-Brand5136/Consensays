@@ -1,9 +1,4 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
-  Box,
   Button,
   Checkbox,
   Divider,
@@ -23,32 +18,14 @@ import {
   AiOutlineClose,
   AiOutlineBgColors,
 } from "react-icons/ai";
+import useStore from "../../store/store";
 import AccordionLayout from "../accordion-layout";
 import PollBackgroundCard from "./poll-background-card";
 
-const PollForm = ({
-  colorScheme,
-  setColorScheme,
-  setPollSaved,
-  setBackground,
-}) => {
+const PollForm = ({ setPollSaved, setBackground }) => {
   // State
-  const [options, setOptions] = useState([
-    {
-      id: 0,
-      question: "",
-    },
-    {
-      id: 1,
-      question: "",
-    },
-  ]);
-  const [title, setTitle] = useState("Poll Title");
+  const { options, pollTitle, settings, colorScheme } = useStore();
   const [saveDisabled, setSaveDisabled] = useState(true);
-  const [settings, setSettings] = useState({
-    hideVotes: false,
-    anonymousVotes: false,
-  });
 
   // Use Effect
   useEffect(() => {
@@ -77,16 +54,16 @@ const PollForm = ({
       },
     ];
 
-    setOptions(newArr);
+    useStore.setState({ options: newArr });
   };
 
   const deleteOptionHandler = (id) => {
-    const newoptionsArr = options.reduce((acc, curr) => {
+    const newOptionsArr = options.reduce((acc, curr) => {
       if (curr.id !== id) acc.push(curr);
       return acc;
     }, []);
 
-    setOptions(newoptionsArr);
+    useStore.setState({ options: newOptionsArr });
   };
 
   const inputHandler = (e, index) => {
@@ -98,11 +75,15 @@ const PollForm = ({
 
     arrCopy[index] = item;
 
-    setOptions(arrCopy);
+    useStore.setState({ options: arrCopy });
   };
 
   const saveHandler = () => {
     setPollSaved();
+  };
+
+  const setColorScheme = (colorScheme) => {
+    useStore.setState({ colorScheme: colorScheme });
   };
 
   return (
@@ -112,11 +93,10 @@ const PollForm = ({
         type={"text"}
         variant={"flushed"}
         placeholder={"Insert title"}
-        value={title}
+        value={pollTitle}
         onChange={(e) => {
-          setTitle(e.target.value);
+          useStore.setState({ pollTitle: e.target.value });
         }}
-        onClick={console.log}
         fontWeight={"semibold"}
         fontSize={"xl"}
         letterSpacing={"0.05em"}
@@ -176,8 +156,8 @@ const PollForm = ({
             colorScheme={colorScheme}
             isChecked={settings.hideVotes}
             onChange={(e) =>
-              setSettings((curr) => {
-                return { ...curr, hideVotes: e.target.checked };
+              useStore.setState({
+                settings: { ...settings, hideVotes: e.target.checked },
               })
             }
           >
@@ -187,8 +167,8 @@ const PollForm = ({
             colorScheme={colorScheme}
             isChecked={settings.anonymousVotes}
             onChange={(e) =>
-              setSettings((curr) => {
-                return { ...curr, anonymousVotes: e.target.checked };
+              useStore.setState({
+                settings: { ...settings, anonymousVotes: e.target.checked },
               })
             }
           >

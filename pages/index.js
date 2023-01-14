@@ -1,15 +1,16 @@
-import { Button, color, Flex } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import Head from "next/head";
 import { useState } from "react";
 import PollForm from "../components/PollCard/poll-form";
 import PollLayout from "../components/PollCard/poll-layout";
 import PollUser from "../components/PollCard/poll-user";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import useStore from "../store/store";
 
 export default function Home() {
-  const [colorScheme, setColorScheme] = useState("purple");
   const [background, setBackground] = useState(null);
   const [pollSaved, setPollSaved] = useState(false);
+  const { colorScheme } = useStore();
 
   return (
     <>
@@ -45,8 +46,6 @@ export default function Home() {
           {!pollSaved ? (
             <PollForm
               setBackground={(path) => setBackground(path)}
-              colorScheme={colorScheme}
-              setColorScheme={(newScheme) => setColorScheme(newScheme)}
               setPollSaved={() => setPollSaved(true)}
             />
           ) : (
