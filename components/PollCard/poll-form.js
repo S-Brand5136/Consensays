@@ -192,12 +192,16 @@ const PollForm = ({ setPollSaved, setBackground }) => {
             <AiOutlineBgColors fontSize={"1.25em"} /> Color Scheme
           </Flex>
         </MenuButton>
-        <MenuList zIndex={11}>
+        <MenuList>
           <MenuItem onClick={() => setColorScheme("green")}> Green</MenuItem>
           <MenuItem onClick={() => setColorScheme("purple")}> Purple</MenuItem>
           <MenuItem onClick={() => setColorScheme("blue")}>Blue</MenuItem>
           <MenuItem onClick={() => setColorScheme("yellow")}>Yellow</MenuItem>
           <MenuItem onClick={() => setColorScheme("pink")}>Pink</MenuItem>
+          <MenuItem onClick={() => setColorScheme("orange")}>Orange</MenuItem>
+          <MenuItem onClick={() => setColorScheme("teal")}>Teal</MenuItem>
+          <MenuItem onClick={() => setColorScheme("gray")}>Gray</MenuItem>
+          <MenuItem onClick={() => setColorScheme("cyan")}>Cyan</MenuItem>
         </MenuList>
       </Menu>
       {/* Background */}
