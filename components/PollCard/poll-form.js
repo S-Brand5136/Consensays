@@ -18,11 +18,12 @@ import {
   AiOutlineClose,
   AiOutlineBgColors,
 } from "react-icons/ai";
+import { colorSchemes } from "../../constants/colorSchemes";
 import useStore from "../../store/store";
 import AccordionLayout from "../accordion-layout";
 import PollBackgroundCard from "./poll-background-card";
 
-const PollForm = ({ setPollSaved, setBackground }) => {
+const PollForm = ({ setPollView, setBackground }) => {
   // State
   const { options, pollTitle, settings, colorScheme } = useStore();
   const [saveDisabled, setSaveDisabled] = useState(true);
@@ -78,8 +79,10 @@ const PollForm = ({ setPollSaved, setBackground }) => {
     useStore.setState({ options: arrCopy });
   };
 
-  const saveHandler = () => {
-    setPollSaved();
+  const saveHandler = () => {};
+
+  const viewPollHandler = () => {
+    setPollView();
   };
 
   const setColorScheme = (colorScheme) => {
@@ -195,32 +198,46 @@ const PollForm = ({ setPollSaved, setBackground }) => {
           </Flex>
         </MenuButton>
         <MenuList>
-          <MenuItem onClick={() => setColorScheme("green")}> Green</MenuItem>
-          <MenuItem onClick={() => setColorScheme("purple")}> Purple</MenuItem>
-          <MenuItem onClick={() => setColorScheme("blue")}>Blue</MenuItem>
-          <MenuItem onClick={() => setColorScheme("yellow")}>Yellow</MenuItem>
-          <MenuItem onClick={() => setColorScheme("pink")}>Pink</MenuItem>
-          <MenuItem onClick={() => setColorScheme("orange")}>Orange</MenuItem>
-          <MenuItem onClick={() => setColorScheme("teal")}>Teal</MenuItem>
-          <MenuItem onClick={() => setColorScheme("gray")}>Gray</MenuItem>
-          <MenuItem onClick={() => setColorScheme("cyan")}>Cyan</MenuItem>
+          {colorSchemes.map((color, index) => (
+            <MenuItem
+              key={index}
+              onClick={() => setColorScheme(color.toLowerCase())}
+            >
+              {color}
+            </MenuItem>
+          ))}
         </MenuList>
       </Menu>
       {/* Background */}
       <PollBackgroundCard
         setBackground={(background) => setBackground(background)}
       />
-      {/* Save button */}
-      <Button
-        disabled={saveDisabled}
-        paddingY={"1.5rem"}
-        colorScheme={colorScheme}
-        mt={4}
-        onClick={saveHandler}
-        id={"save-btn"}
-      >
-        Save
-      </Button>
+      <Flex justifyContent={"space-between"} gap={5}>
+        {/* View user view button */}
+        <Button
+          mt={4}
+          width={"100%"}
+          paddingY={"1.5rem"}
+          id={"user-view-btn"}
+          variant={"ghost"}
+          onClick={viewPollHandler}
+        >
+          View Poll
+        </Button>
+
+        {/* Save button */}
+        <Button
+          width={"100%"}
+          disabled={saveDisabled}
+          paddingY={"1.5rem"}
+          colorScheme={colorScheme}
+          mt={4}
+          onClick={saveHandler}
+          id={"save-btn"}
+        >
+          Save
+        </Button>
+      </Flex>
     </>
   );
 };
