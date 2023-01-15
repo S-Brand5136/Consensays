@@ -6,10 +6,15 @@ import PollLayout from "../components/PollCard/poll-layout";
 import PollUser from "../components/PollCard/poll-user";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import useStore from "../store/store";
+import {
+  VOTE_USER_VIEW,
+  VOTE_FORM_VIEW,
+  VOTE_POSTED,
+} from "../constants/index";
 
 export default function Home() {
   const [background, setBackground] = useState(null);
-  const [pollSaved, setPollSaved] = useState(false);
+  const [pollView, setPollView] = useState(VOTE_FORM_VIEW);
   const { colorScheme } = useStore();
 
   return (
@@ -32,9 +37,9 @@ export default function Home() {
         backgroundRepeat={"no-repeat"}
         backgroundPosition={"center"}
       >
-        {pollSaved && (
+        {pollView === VOTE_USER_VIEW && (
           <Button
-            onClick={() => setPollSaved(false)}
+            onClick={() => setPollView(VOTE_FORM_VIEW)}
             display={"flex"}
             boxShadow={"1px 2px 5px gray"}
             gap={2}
@@ -43,14 +48,15 @@ export default function Home() {
             <AiOutlineArrowLeft /> Edit Options
           </Button>
         )}
-        <PollLayout pollSaved={pollSaved}>
-          {!pollSaved ? (
+        <PollLayout pollView={pollView}>
+          {pollView === VOTE_FORM_VIEW && (
             <PollForm
               setBackground={(path) => setBackground(path)}
-              setPollSaved={() => setPollSaved(true)}
+              setPollView={() => setPollView(VOTE_USER_VIEW)}
             />
-          ) : (
-            <PollUser setPollSaved={() => setPollSaved(false)} />
+          )}
+          {pollView === VOTE_USER_VIEW && (
+            <PollUser setPollView={() => setPollView(VOTE_FORM_VIEW)} />
           )}
         </PollLayout>
       </Flex>
