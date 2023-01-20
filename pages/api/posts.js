@@ -1,26 +1,72 @@
-export default function handler(req, res) {
+import prisma from "../../lib/prisma";
+
+export default async function handler(req, res) {
+  /*
+    POST: a new poll to the db
+    BODY: {
+      title:          required | string
+      options:        required | array    [ question ]
+      colorScheme:    optional | string,  defaults to blue
+      hideVotes:      optional | boolean, defaults to false
+      anonymousVotes: optional | boolean, defaults to false
+      backgroundURL:  optional | string,  defaults to empty
+    }
+    URL: posts/[id]
+  */
   if (req.method === "POST") {
-    // placeholder return value from inserting post into DB
-    res.status(200).json({
-      name: "Post Title",
-      options: [
-        {
-          id: 0,
-          question: "",
-          votes: 0,
+    try {
+      const {
+        title,
+        options,
+        colorScheme = "blue",
+        hideVotes = false,
+        anonymousVotes = false,
+        backgroundURL = "",
+      } = req.body;
+
+      // create poll
+      const result = await prisma.poll.create({
+        data: {
+          title,
+          colorScheme,
+          hideVotes,
+          anonymousVotes,
+          backgroundURL,
         },
-        {
-          id: 1,
-          question: "",
-          vote: 0,
+      });
+
+      if (!result) {
+        throw new Error("Could not create poll");
+      }
+
+      // create questions for poll
+      const questions = await Promise.all(
+        options.map((option) => {
+          return prisma.question.create({
+            data: {
+              question: option.question,
+              votes: 0,
+              pollId: result.id,
+            },
+          });
+        })
+      );
+
+      // placeholder return value from inserting post into DB
+      res.status(200).json({
+        title: result.title,
+        options: questions,
+        colorScheme: result.colorScheme,
+        settings: {
+          hideVotes: result.hideVotes,
+          anonymousVotes: result.anonymousVotes,
         },
-      ],
-      colorScheme: "purple",
-      settings: {
-        hideVotes: false,
-        anonymousVotes: false,
-      },
-      slug: "post-xyz",
-    });
+        backgroundURL,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error,
+      });
+    }
   }
 }
