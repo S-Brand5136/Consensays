@@ -9,8 +9,9 @@ import {
 import Image from "next/image";
 import { MdOutlineWallpaper } from "react-icons/md";
 import { backgrounds } from "../../constants/backgrounds";
+import useStore from "../../store/store";
 
-const PollBackgroundCard = ({ setBackground }) => {
+const PollBackgroundCard = () => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -37,9 +38,9 @@ const PollBackgroundCard = ({ setBackground }) => {
           width={"20rem"}
           h={"20rem"}
           overflowY={"scroll"}
-          p="40px"
-          bg="white"
-          rounded="md"
+          p='40px'
+          bg='white'
+          rounded='md'
           boxShadow={"1px 2px 5px gray"}
           columns={2}
           gap={5}
@@ -56,12 +57,16 @@ const PollBackgroundCard = ({ setBackground }) => {
             }}
             onClick={() => setBackground(null)}
             padding={2}
-          >
-            <Image src="" alt={""} width={100} height={50} />
-          </Box>
+            mt={2}
+            ml={1}
+            width={"98px"}
+            height={"50px"}
+          ></Box>
           {backgrounds.map((item, id) => (
             <Box
-              onClick={() => setBackground(item.path)}
+              onClick={() => {
+                useStore.setState({ background: item.path });
+              }}
               _hover={{
                 background: "#F8F8F8",
                 cursor: "pointer",

@@ -54,14 +54,8 @@ export default async function handler(req, res) {
 
       // placeholder return value from inserting post into DB
       res.status(200).json({
-        title: result.title,
-        options: questions,
-        colorScheme: result.colorScheme,
-        settings: {
-          hideVotes: result.hideVotes,
-          anonymousVotes: result.anonymousVotes,
-        },
-        backgroundURL,
+        poll: result,
+        questions,
       });
     } catch (error) {
       return res.status(500).json({

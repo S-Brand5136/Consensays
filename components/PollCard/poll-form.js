@@ -30,13 +30,16 @@ import PollBackgroundCard from "./poll-background-card";
 import { VOTE_POSTED, VOTE_FORM_VIEW } from "../../constants/index";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
+import axios from "axios";
 
-const PollForm = ({ setPollView, setBackground }) => {
+// todo: refactor to use useReducer
+const PollForm = ({ setPollView }) => {
   // State
-  const { options, pollTitle, settings, colorScheme } = useStore();
+  const { options, pollTitle, settings, colorScheme, background } = useStore();
   const [saveDisabled, setSaveDisabled] = useState(true);
   const [formState, setFormState] = useState(VOTE_FORM_VIEW);
   const [isLoading, setIsLoading] = useState(false);
+  const [poll, setPoll] = useState(null);
   const toast = useToast();
 
   // Use Effect
@@ -90,13 +93,34 @@ const PollForm = ({ setPollView, setBackground }) => {
     useStore.setState({ options: arrCopy });
   };
 
-  const saveHandler = () => {
+  const saveHandler = async () => {
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const { data } = await axios.post("/api/posts", {
+        title: pollTitle,
+        options,
+        colorScheme,
+        hideVotes: settings.hideVotes,
+        anonymousVotes: settings.anonymousVotes,
+        background,
+      });
+
+      console.log(data);
+
+      setPoll({ ...data });
+
       setFormState(VOTE_POSTED);
-    }, 1500);
+    } catch (error) {
+      toast({
+        title: error.message,
+        duration: 9000,
+        isClosable: true,
+        colorScheme: "error",
+      });
+    }
+
+    setIsLoading(false);
   };
 
   const viewPollHandler = () => {
@@ -233,11 +257,9 @@ const PollForm = ({ setPollView, setBackground }) => {
             </MenuList>
           </Menu>
           {/* Background */}
-          <PollBackgroundCard
-            setBackground={(background) => setBackground(background)}
-          />
+          <PollBackgroundCard />
+          {/* View user view button */}
           <Flex justifyContent={"space-between"} gap={5}>
-            {/* View user view button */}
             <Button
               mt={4}
               width={"100%"}
@@ -276,14 +298,16 @@ const PollForm = ({ setPollView, setBackground }) => {
         <PollConfirmation colorScheme={colorScheme} title={"Poll Created"}>
           <>
             <Text fontSize={"1.2em"}>
-              <Link href={"www.example.com"}>www.example.com</Link>
+              <Link href={`/polls/${poll.poll.id}`}>View Live Poll</Link>
               <Tooltip label={"Copy to Clipboard"}>
                 <Button
                   background={"transparent"}
                   marginLeft={10}
                   fontSize={"1.25em"}
                   onClick={() => {
-                    navigator.clipboard.writeText("www.example.com");
+                    navigator.clipboard.writeText(
+                      `localhost:3000/polls/${poll.id}`
+                    );
                     toast({
                       title: "Copied link to clipboard",
                       duration: 9000,
