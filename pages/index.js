@@ -43,7 +43,7 @@ export default function Home() {
             <AiOutlineArrowLeft /> Edit Options
           </Button>
         )}
-        <PollLayout pollView={pollView}>
+        <PollLayout>
           {pollView === VOTE_FORM_VIEW && (
             <PollForm
               setBackground={(path) => setBackground(path)}

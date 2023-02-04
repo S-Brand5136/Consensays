@@ -97,7 +97,7 @@ const PollForm = ({ setPollView }) => {
     setIsLoading(true);
 
     try {
-      const { data } = await axios.post("/api/posts", {
+      const { data } = await axios.post("/api/poll", {
         title: pollTitle,
         options,
         colorScheme,
@@ -105,8 +105,6 @@ const PollForm = ({ setPollView }) => {
         anonymousVotes: settings.anonymousVotes,
         background,
       });
-
-      console.log(data);
 
       setPoll({ ...data });
 

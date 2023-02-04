@@ -55,7 +55,6 @@ const PollBackgroundCard = () => {
               cursor: "pointer",
               boxShadow: "1px 1px 2px #d9d9d9 inset",
             }}
-            onClick={() => setBackground(null)}
             padding={2}
             mt={2}
             ml={1}

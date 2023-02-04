@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         colorScheme = "blue",
         hideVotes = false,
         anonymousVotes = false,
-        backgroundURL = "",
+        background = "",
       } = req.body;
 
       // create poll
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
           colorScheme,
           hideVotes,
           anonymousVotes,
-          backgroundURL,
+          backgroundURL: background,
         },
       });
 
