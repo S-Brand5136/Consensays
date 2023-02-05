@@ -292,6 +292,14 @@ const PollForm = ({ setPollView }) => {
             <MenuList>
               {colorSchemes.map((color, index) => (
                 <MenuItem
+                  icon={
+                    <Box
+                      borderRadius={"50%"}
+                      height={4}
+                      width={4}
+                      background={`${color}`}
+                    ></Box>
+                  }
                   key={index}
                   onClick={() => setColorScheme(color.toLowerCase())}
                 >
