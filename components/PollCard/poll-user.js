@@ -31,7 +31,7 @@ const PollUser = () => {
       return;
     }
 
-    if (!compareDates(settings.startDate)) {
+    if (compareDates(settings.startDate)) {
       return;
     }
 

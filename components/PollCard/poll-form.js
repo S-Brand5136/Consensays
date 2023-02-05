@@ -117,7 +117,8 @@ const PollForm = ({ setPollView }) => {
         options,
         colorScheme,
         hideVotes: settings.hideVotes,
-        anonymousVotes: settings.anonymousVotes,
+        startDate: settings.startDate,
+        endDate: settings.endDate,
         background,
       });
 

@@ -36,7 +36,7 @@ export default async function handler(req, res) {
       }
 
     /*
-      POST: a new vote to a poll by ID
+      PUT: a new vote to a poll by ID
       BODY: {
         questionID: required | string <question id>
       }

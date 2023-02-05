@@ -50,7 +50,8 @@ Poll prop:
   title: String
   colorScheme: String
   hideVotes: boolean
-  anonymousVotes: boolean
+  startDate: isoString
+  endDate: isoString
   backgroundURL: String
   queststions: [
     { 
@@ -66,7 +67,8 @@ const Poll = ({ poll }) => {
     useStore.setState({
       settings: {
         hideVotes: poll.hideVotes,
-        anonymousVotes: poll.anonymousVotes,
+        startDate: new Date(poll.startDate).getTime(),
+        endDate: new Date(poll.endDate).getTime(),
       },
       colorScheme: poll.colorScheme,
       pollTitle: poll.title,

@@ -19,7 +19,7 @@ const useStore = create((set) => ({
   ],
   pollTitle: "Poll Title",
   colorScheme: "purple",
-  background: null,
+  background: "",
 }));
 
 export default useStore;

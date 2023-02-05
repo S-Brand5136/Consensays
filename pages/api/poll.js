@@ -1,4 +1,5 @@
 import prisma from "../../lib/prisma";
+import { compareDates } from "../../lib/compareDates";
 
 export default async function handler(req, res) {
   /*
@@ -8,7 +9,8 @@ export default async function handler(req, res) {
       options:        required | array    [ question ]
       colorScheme:    optional | string,  defaults to blue
       hideVotes:      optional | boolean, defaults to false
-      anonymousVotes: optional | boolean, defaults to false
+      startDate:      required | UTC date
+      endDate:      required | UTC date
       backgroundURL:  optional | string,  defaults to empty
     }
     URL: posts/[id]
@@ -20,9 +22,21 @@ export default async function handler(req, res) {
         options,
         colorScheme = "blue",
         hideVotes = false,
-        anonymousVotes = false,
+        startDate,
+        endDate,
         background = "",
       } = req.body;
+
+      const startDay = new Date(startDate);
+      const endDay = new Date(endDate);
+
+      if (startDay > new Date()) {
+        throw new Error("Start date is invalid");
+      }
+
+      if (endDay < startDay) {
+        throw new Error("end date is invalid");
+      }
 
       // create poll
       const result = await prisma.poll.create({
@@ -30,7 +44,8 @@ export default async function handler(req, res) {
           title,
           colorScheme,
           hideVotes,
-          anonymousVotes,
+          startDate: startDay.toISOString().toString(),
+          endDate: endDay.toISOString().toString(),
           backgroundURL: background,
         },
       });
