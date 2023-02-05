@@ -74,6 +74,7 @@ const Poll = ({ poll }) => {
       pollTitle: poll.title,
       background: poll.backgroundURL,
       options: [...poll.questions],
+      pollId: poll.id,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

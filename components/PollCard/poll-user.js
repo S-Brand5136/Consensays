@@ -10,38 +10,73 @@ import {
 import PollOptionItem from "./poll-option-item";
 import useStore from "../../store/store";
 import { VOTE_PENDING, VOTE_SENT } from "../../constants/index";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
 import Moment from "react-moment";
 import { compareDates } from "../../lib/compareDates";
+import axios from "axios";
 
 const PollUser = () => {
   const [voteStatus, setVoteStatus] = useState(VOTE_PENDING);
   const [loading, setLoading] = useState(false);
-  const { options, pollTitle, colorScheme, settings } = useStore();
+  const { options, pollTitle, colorScheme, settings, pollId } = useStore();
   const { isOpen, onToggle } = useDisclosure();
   const totalVotes = useMemo(
     () => options.reduce((acc, curr) => acc + curr.votes, 0),
     [options]
   );
 
-  const voteHandler = (id) => {
-    if (voteStatus === VOTE_SENT) {
-      return;
+  useEffect(() => {
+    const pollsVotedOn = JSON.parse(localStorage.getItem("pollsVotedOn"));
+
+    if (pollsVotedOn) {
+      pollsVotedOn.forEach((id) => {
+        if (id === pollId) {
+          setVoteStatus(VOTE_SENT);
+        }
+      });
     }
+  }, []);
 
-    if (compareDates(settings.startDate)) {
-      return;
-    }
+  const voteHandler = async (id) => {
+    try {
+      if (voteStatus === VOTE_SENT) {
+        return;
+      }
 
-    setLoading(true);
+      if (compareDates(settings.startDate)) {
+        return;
+      }
 
-    // simulate post request wait time
-    setTimeout(() => {
+      setLoading(true);
+
+      const { data } = await axios.put(`/api/question/${id}`);
+
+      const updateOptions = options.map((item) => {
+        if (Number(item.id) === Number(data.updatedQuestion.id)) {
+          return data.updatedQuestion;
+        }
+
+        return item;
+      });
+
+      const pollsVotedOn = JSON.parse(localStorage.getItem("pollsVotedOn"));
+
+      if (!pollsVotedOn) {
+        localStorage.setItem("pollsVotedOn", JSON.stringify([pollId]));
+      } else {
+        pollsVotedOn.push(pollId);
+        localStorage.setItem("pollsVotedOn", JSON.stringify(pollsVotedOn));
+      }
+
+      useStore.setState({ options: [...updateOptions] });
+
       setLoading(false);
       setVoteStatus(VOTE_SENT);
-    }, 1000);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   const getOptionList = () => {

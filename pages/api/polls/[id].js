@@ -34,36 +34,6 @@ export default async function handler(req, res) {
           error,
         });
       }
-
-    /*
-      PUT: a new vote to a poll by ID
-      BODY: {
-        questionID: required | string <question id>
-      }
-      URL: posts/[id]
-    */
-    case "PUT":
-      try {
-        const { questionID } = req.body;
-
-        const updatedQuestion = await prisma.question.update({
-          where: { id: questionID },
-          data: { votes: { increment: 1 } },
-        });
-
-        if (!updatedQuestion) {
-          throw new Error("Could not update vote!");
-        }
-
-        res.status(200).json({
-          message: "Update complete!",
-          updatedQuestion,
-        });
-      } catch (error) {
-        res.status(500).json({
-          error,
-        });
-      }
     default:
       res.setHeader("Allow", ["GET", "PUT"]);
       res.status(405).end("");
