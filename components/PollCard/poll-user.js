@@ -1,6 +1,7 @@
 import {
   Button,
   Collapse,
+  Flex,
   Heading,
   SimpleGrid,
   Text,
@@ -12,6 +13,8 @@ import { VOTE_PENDING, VOTE_SENT } from "../../constants/index";
 import { useState, useMemo } from "react";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
+import Moment from "react-moment";
+import { compareDates } from "../../lib/compareDates";
 
 const PollUser = () => {
   const [voteStatus, setVoteStatus] = useState(VOTE_PENDING);
@@ -24,6 +27,14 @@ const PollUser = () => {
   );
 
   const voteHandler = (id) => {
+    if (voteStatus === VOTE_SENT) {
+      return;
+    }
+
+    if (!compareDates(settings.startDate)) {
+      return;
+    }
+
     setLoading(true);
 
     // simulate post request wait time
@@ -64,11 +75,25 @@ const PollUser = () => {
             {pollTitle}
           </Heading>
           {getOptionList()}
-          {!settings.hideVotes && (
-            <Text paddingX={7}>
-              {totalVotes} {totalVotes === 1 ? "Total Vote" : "Total Votes"}
-            </Text>
-          )}
+          <Flex justifyContent={"space-between"}>
+            {!settings.hideVotes && (
+              <Text paddingX={7}>
+                {totalVotes || 0}{" "}
+                {totalVotes === 1 ? "Total Vote" : "Total Votes"}
+              </Text>
+            )}
+            {!compareDates(settings.startDate) ? (
+              <Text>
+                Poll ends on:{" "}
+                <Moment format='YY/MM/DD'>{settings.endDate}</Moment>
+              </Text>
+            ) : (
+              <Text>
+                Poll starts on:{" "}
+                <Moment format='YY/MM/DD'>{settings.startDate}</Moment>
+              </Text>
+            )}
+          </Flex>
         </>
       )}
 

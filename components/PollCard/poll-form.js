@@ -34,6 +34,7 @@ import PollConfirmation from "./poll-confirmation";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { getMinEndDate } from "../../lib/getMinEndDate";
 
 // todo: refactor to use useReducer
 const PollForm = ({ setPollView }) => {
@@ -141,13 +142,6 @@ const PollForm = ({ setPollView }) => {
 
   const setColorScheme = (colorScheme) => {
     useStore.setState({ colorScheme: colorScheme });
-  };
-
-  const getMinEndDate = (date) => {
-    var date = new Date(date);
-    date.setDate(date.getDate() + 1);
-
-    return date;
   };
 
   return (
@@ -323,7 +317,7 @@ const PollForm = ({ setPollView }) => {
             {/* Save button */}
             <Button
               width={"100%"}
-              disabled={saveDisabled}
+              isDisabled={saveDisabled}
               paddingY={"1.5rem"}
               colorScheme={colorScheme}
               mt={4}
