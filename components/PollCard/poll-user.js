@@ -9,15 +9,19 @@ import {
 import PollOptionItem from "./poll-option-item";
 import useStore from "../../store/store";
 import { VOTE_PENDING, VOTE_SENT } from "../../constants/index";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
 
 const PollUser = () => {
   const [voteStatus, setVoteStatus] = useState(VOTE_PENDING);
   const [loading, setLoading] = useState(false);
-  const { options, pollTitle, colorScheme } = useStore();
+  const { options, pollTitle, colorScheme, settings } = useStore();
   const { isOpen, onToggle } = useDisclosure();
+  const totalVotes = useMemo(
+    () => options.reduce((acc, curr) => acc + curr.votes, 0),
+    [options]
+  );
 
   const voteHandler = (id) => {
     setLoading(true);
@@ -29,7 +33,23 @@ const PollUser = () => {
     }, 1000);
   };
 
-  const votes = Math.floor(Math.random() * (100 - 0 + 1) + 1);
+  const getOptionList = () => {
+    return (
+      <SimpleGrid gap={10} paddingX={4} paddingBottom={6}>
+        {options.map((option) => (
+          <PollOptionItem
+            colorScheme={colorScheme}
+            key={option.id}
+            question={option.question}
+            totalVotes={totalVotes}
+            votes={option.votes}
+            onClick={() => voteHandler(option.id)}
+            settings={settings}
+          />
+        ))}
+      </SimpleGrid>
+    );
+  };
 
   return (
     <>
@@ -43,21 +63,12 @@ const PollUser = () => {
           >
             {pollTitle}
           </Heading>
-          <SimpleGrid gap={10} paddingX={4} paddingBottom={6}>
-            {options.map((option) => (
-              <PollOptionItem
-                colorScheme={colorScheme}
-                key={option.id}
-                text={option.question}
-                totalVotes={100}
-                votes={Math.floor(Math.random() * (100 - 0 + 1) + 1)}
-                onClick={() => voteHandler(option.id)}
-              />
-            ))}
-          </SimpleGrid>
-          <Text paddingX={7}>
-            {votes} {votes <= 1 ? "vote" : "votes"}
-          </Text>
+          {getOptionList()}
+          {!settings.hideVotes && (
+            <Text paddingX={7}>
+              {totalVotes} {totalVotes === 1 ? "Total Vote" : "Total Votes"}
+            </Text>
+          )}
         </>
       )}
 
@@ -79,17 +90,7 @@ const PollUser = () => {
             View Results
           </Button>
           <Collapse style={{ width: "100%" }} in={isOpen} animateOpacity>
-            <SimpleGrid gap={10} paddingX={4} paddingBottom={6}>
-              {options.map((option) => (
-                <PollOptionItem
-                  colorScheme={colorScheme}
-                  key={option.id}
-                  text={option.question}
-                  totalVotes={100}
-                  votes={Math.floor(Math.random() * (100 - 0 + 1) + 1)}
-                />
-              ))}
-            </SimpleGrid>
+            {getOptionList()}
           </Collapse>
         </PollConfirmation>
       )}

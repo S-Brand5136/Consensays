@@ -1,7 +1,19 @@
-import { Avatar, Box, Flex, Progress, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, Flex, Progress, Text } from "@chakra-ui/react";
+import { useMemo } from "react";
 
-const PollOptionItem = ({ colorScheme, text, totalVotes, votes, onClick }) => {
+const PollOptionItem = ({
+  colorScheme,
+  question,
+  totalVotes,
+  votes,
+  onClick,
+  settings,
+}) => {
+  const progressValue = useMemo(
+    () => (votes / totalVotes) * 100,
+    [votes, totalVotes]
+  );
+
   return (
     <>
       <Box
@@ -14,16 +26,24 @@ const PollOptionItem = ({ colorScheme, text, totalVotes, votes, onClick }) => {
         padding={4}
         onClick={onClick}
       >
-        <Flex alignItems={"center"} justifyContent={"space-between"}>
-          <Text marginBottom={3} fontWeight={"semibold"} letterSpacing={0.5}>
-            {text}
+        <Flex
+          flexDir={"column"}
+          alignItems={"start"}
+          justifyContent={"space-between"}
+        >
+          <Text fontWeight={"semibold"} letterSpacing={0.5}>
+            {question}
           </Text>
-          <Avatar marginBottom={2} size="sm" bg={"yellow.200"} name="Darius" />
+          {!settings.hideVotes && (
+            <Text marginBottom={3} fontSize={"xs"}>
+              votes {votes}
+            </Text>
+          )}
         </Flex>
         <Progress
           colorScheme={colorScheme}
           borderRadius={10}
-          value={(votes / totalVotes) * 100}
+          value={progressValue}
         />
       </Box>
     </>
