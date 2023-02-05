@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Checkbox,
   Divider,
@@ -31,6 +32,8 @@ import { VOTE_POSTED, VOTE_FORM_VIEW } from "../../constants/index";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 // todo: refactor to use useReducer
 const PollForm = ({ setPollView }) => {
@@ -94,9 +97,20 @@ const PollForm = ({ setPollView }) => {
   };
 
   const saveHandler = async () => {
-    setIsLoading(true);
+    for (const item of options) {
+      if (item?.question?.length === 0) {
+        return toast({
+          title: "Questions Cannot be empty",
+          duration: 9000,
+          isClosable: true,
+          colorScheme: "error",
+        });
+      }
+    }
 
     try {
+      setIsLoading(true);
+
       const { data } = await axios.post("/api/poll", {
         title: pollTitle,
         options,
@@ -127,6 +141,13 @@ const PollForm = ({ setPollView }) => {
 
   const setColorScheme = (colorScheme) => {
     useStore.setState({ colorScheme: colorScheme });
+  };
+
+  const getMinEndDate = (date) => {
+    var date = new Date(date);
+    date.setDate(date.getDate() + 1);
+
+    return date;
   };
 
   return (
@@ -202,7 +223,7 @@ const PollForm = ({ setPollView }) => {
           </Button>
           {/* settings */}
           <AccordionLayout title={"Settings"}>
-            <Stack spacing={2} paddingTop={2}>
+            <Stack spacing={3} paddingTop={2}>
               <Checkbox
                 colorScheme={colorScheme}
                 isChecked={settings.hideVotes}
@@ -214,17 +235,47 @@ const PollForm = ({ setPollView }) => {
               >
                 Hide votes until poll ends
               </Checkbox>
-              <Checkbox
-                colorScheme={colorScheme}
-                isChecked={settings.anonymousVotes}
-                onChange={(e) =>
-                  useStore.setState({
-                    settings: { ...settings, anonymousVotes: e.target.checked },
-                  })
-                }
-              >
-                Anonymous votes
-              </Checkbox>
+              <Box paddingLeft={0.5}>
+                <Text fontSize={"sm"} fontWeight={"bold"}>
+                  Start Date
+                </Text>
+                <DatePicker
+                  showIcon
+                  allowSameDay
+                  minDate={new Date()}
+                  selected={settings.startDate}
+                  onChange={(date) => {
+                    if (date.getTime() > settings.endDate) {
+                      return useStore.setState({
+                        settings: {
+                          ...settings,
+                          startDate: date.getTime(),
+                          endDate: getMinEndDate(date),
+                        },
+                      });
+                    }
+
+                    useStore.setState({
+                      settings: { ...settings, startDate: date.getTime() },
+                    });
+                  }}
+                />
+              </Box>
+              <Box paddingLeft={0.5}>
+                <Text fontSize={"sm"} fontWeight={"bold"}>
+                  End Date
+                </Text>
+                <DatePicker
+                  onSelect={(d) => console.log(d.getTime())}
+                  minDate={getMinEndDate(settings.startDate)}
+                  selected={settings.endDate}
+                  onChange={(date) =>
+                    useStore.setState({
+                      settings: { ...settings, endDate: date.getTime() },
+                    })
+                  }
+                />
+              </Box>
             </Stack>
           </AccordionLayout>
           <Divider borderWidth={"1px"} />
