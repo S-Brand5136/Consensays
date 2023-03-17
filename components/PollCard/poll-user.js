@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Collapse,
   Flex,
@@ -8,24 +9,19 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import PollOptionItem from "./poll-option-item";
-import useStore from "../../store/store";
-import { VOTE_PENDING, VOTE_SENT } from "../../constants/index";
-import { useState, useMemo, useEffect } from "react";
+import useStore from "../../store/app-state-store.hook";
+import {VOTE_PENDING, VOTE_SENT} from "../../constants/index";
+import {useState, useEffect} from "react";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
 import Moment from "react-moment";
-import { compareDates } from "../../lib/compareDates";
-import axios from "axios";
+import {usePoll} from "../../hooks/usePoll.hook";
 
-const PollUser = () => {
+const PollUser = ({previewMode}) => {
   const [voteStatus, setVoteStatus] = useState(VOTE_PENDING);
-  const [loading, setLoading] = useState(false);
-  const { options, pollTitle, colorScheme, settings, pollId } = useStore();
-  const { isOpen, onToggle } = useDisclosure();
-  const totalVotes = useMemo(
-    () => options.reduce((acc, curr) => acc + curr.votes, 0),
-    [options]
-  );
+  const {options, pollTitle, colorScheme, settings, pollId} = useStore();
+  const {isOpen, onToggle} = useDisclosure();
+  const {castVote, totalVotes, hasPollStarted, hasPollEnded, loading, error} = usePoll(options, settings, pollId);
 
   useEffect(() => {
     const pollsVotedOn = JSON.parse(localStorage.getItem("pollsVotedOn"));
@@ -37,59 +33,28 @@ const PollUser = () => {
         }
       });
     }
-  }, []);
+  }, [pollId]);
 
   const voteHandler = async (id) => {
-    try {
-      if (voteStatus === VOTE_SENT) {
-        return;
-      }
-
-      if (compareDates(settings.startDate)) {
-        return;
-      }
-
-      setLoading(true);
-
-      const { data } = await axios.put(`/api/question/${id}`);
-
-      const updateOptions = options.map((item) => {
-        if (Number(item.id) === Number(data.updatedQuestion.id)) {
-          return data.updatedQuestion;
-        }
-
-        return item;
-      });
-
-      const pollsVotedOn = JSON.parse(localStorage.getItem("pollsVotedOn"));
-
-      if (!pollsVotedOn) {
-        localStorage.setItem("pollsVotedOn", JSON.stringify([pollId]));
-      } else {
-        pollsVotedOn.push(pollId);
-        localStorage.setItem("pollsVotedOn", JSON.stringify(pollsVotedOn));
-      }
-
-      useStore.setState({ options: [...updateOptions] });
-
-      setLoading(false);
-      setVoteStatus(VOTE_SENT);
-    } catch (error) {
-      setLoading(false);
+    if (voteStatus === VOTE_SENT || previewMode || hasPollEnded) {
+      return;
     }
-  };
+
+    await castVote(id);
+    setVoteStatus(VOTE_SENT);
+  }
 
   const getOptionList = () => {
     return (
       <SimpleGrid gap={10} paddingX={4} paddingBottom={6}>
-        {options.map((option) => (
+        {options.map(({id, question, votes}) => (
           <PollOptionItem
             colorScheme={colorScheme}
-            key={option.id}
-            question={option.question}
+            key={id}
+            question={question}
             totalVotes={totalVotes}
-            votes={option.votes}
-            onClick={() => voteHandler(option.id)}
+            votes={votes}
+            onClick={() => voteHandler(id)}
             settings={settings}
           />
         ))}
@@ -117,9 +82,9 @@ const PollUser = () => {
                 {totalVotes === 1 ? "Total Vote" : "Total Votes"}
               </Text>
             )}
-            {!compareDates(settings.startDate) ? (
+            {hasPollStarted ? (
               <Text>
-                Poll ends on:{" "}
+                {hasPollEnded ? "Poll ended on " : "Poll ends on: "}
                 <Moment format='YY/MM/DD'>{settings.endDate}</Moment>
               </Text>
             ) : (
@@ -139,6 +104,19 @@ const PollUser = () => {
         />
       )}
 
+      {!loading && error && (
+        <Flex
+          flexDir={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          padding={10}
+          gap={5}
+        >
+          <Box fontSize={'xx-large'}>😔</Box>
+          <Heading fontSize={'x-large'}>{error}</Heading>
+        </Flex>
+      )}
+
       {voteStatus === VOTE_SENT && (
         <PollConfirmation title={"Thanks for voting!"}>
           <Button
@@ -149,7 +127,7 @@ const PollUser = () => {
           >
             View Results
           </Button>
-          <Collapse style={{ width: "100%" }} in={isOpen} animateOpacity>
+          <Collapse style={{width: "100%"}} in={isOpen} animateOpacity>
             {getOptionList()}
           </Collapse>
         </PollConfirmation>

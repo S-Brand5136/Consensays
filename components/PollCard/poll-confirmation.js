@@ -1,6 +1,6 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import { AiFillCheckCircle } from "react-icons/ai";
-import useStore from "../../store/store";
+import useStore from "../../store/app-state-store.hook";
 
 const PollConfirmation = ({ children, title }) => {
   const { colorScheme } = useStore();

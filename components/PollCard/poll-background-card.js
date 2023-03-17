@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import { MdOutlineWallpaper } from "react-icons/md";
 import { backgrounds } from "../../constants/backgrounds";
-import useStore from "../../store/store";
+import useStore from "../../store/app-state-store.hook";
 
 const PollBackgroundCard = () => {
   const { isOpen, onToggle } = useDisclosure();

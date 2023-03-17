@@ -1,10 +1,10 @@
-import { create } from "zustand";
-import { getMinEndDate } from "../lib/getMinEndDate";
+import {create} from "zustand";
+import {getMinEndDate} from "../lib/getMinEndDate";
 
 const useStore = create((set) => ({
   settings: {
     hideVotes: false,
-    startDate: new Date().getTime(),
+    startDate: new Date(),
     endDate: getMinEndDate(new Date()),
   },
   options: [

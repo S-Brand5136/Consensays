@@ -25,7 +25,7 @@ import {
   AiOutlineCopy,
 } from "react-icons/ai";
 import { colorSchemes } from "../../constants/colorSchemes";
-import useStore from "../../store/store";
+import useStore from "../../store/app-state-store.hook";
 import AccordionLayout from "../accordion-layout";
 import PollBackgroundCard from "./poll-background-card";
 import { VOTE_POSTED, VOTE_FORM_VIEW } from "../../constants/index";
