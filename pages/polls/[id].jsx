@@ -4,12 +4,12 @@ import Head from "next/head";
 import dynamic from "next/dynamic";
 import prisma from "../../lib/prisma";
 import {getPollById} from "../../lib/polls";
-import useStore from "../../store/app-state-store.hook";
-import {Flex} from "@chakra-ui/react";
+import usePollState from "../../store/poll-state.store";
+import MainLayout from "../../components/Layouts/main-layout";
 
 // lazy imports
 const PollLayout = dynamic(
-  () => import("../../components/PollCard/poll-layout"),
+  () => import("../../components/Layouts/poll-layout"),
   {ssr: false}
 );
 const PollUser = dynamic(() => import("../../components/PollCard/poll-user"), {
@@ -21,7 +21,7 @@ export async function getStaticPaths() {
     // Return a list of possible value for id
     const polls = await prisma.poll.findMany();
 
-    // Map through all polls to get each ID
+    // Map through all polls to get eah ID
     const paths = polls.map((poll) => ({
       params: {
         id: poll.id.toString(),
@@ -62,7 +62,7 @@ Poll prop:
 */
 const Poll = ({poll}) => {
   useEffect(() => {
-    useStore.setState({
+    usePollState.setState({
       settings: {
         hideVotes: poll.hideVotes,
         startDate: new Date(poll.startDate).getTime(),
@@ -85,22 +85,13 @@ const Poll = ({poll}) => {
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
         <link rel='icon' href='/favicon.ico'/>
       </Head>
-      <Flex
-        as={"main"}
-        h={"100vh"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        flexDir={"column"}
-        gap={5}
-        background={`url(${poll.backgroundURL})`}
-        backgroundSize={"cover"}
-        backgroundRepeat={"no-repeat"}
-        backgroundPosition={"center"}
+      <MainLayout
+        backgroundURL={poll.backgroundURL}
       >
         <PollLayout>
           <PollUser/>
         </PollLayout>
-      </Flex>
+      </MainLayout>
     </>
   );
 };

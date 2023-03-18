@@ -1,6 +1,6 @@
-import useStore from "../store/app-state-store.hook";
+import usePollState from "../store/poll-state.store";
 import {compareDates} from "../lib/compareDates";
-import {useAxios} from "./use-axios.hook";
+import {useAxios} from "./useAxios.hook";
 import {useMemo} from 'react';
 
 export const usePoll = (options, settings, pollId) => {
@@ -43,7 +43,7 @@ export const usePoll = (options, settings, pollId) => {
         localStorage.setItem("pollsVotedOn", JSON.stringify(pollsVotedOn));
       }
 
-      useStore.setState({options: [...updateOptions]});
+      usePollState.setState({options: [...updateOptions]});
     } catch (err) {
 
     }

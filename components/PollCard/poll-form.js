@@ -5,8 +5,6 @@ import {
   Divider,
   Flex,
   Input,
-  InputGroup,
-  InputRightElement,
   Link,
   Menu,
   MenuButton,
@@ -17,76 +15,46 @@ import {
   Tooltip,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {useState} from "react";
 import {
   AiOutlinePlus,
-  AiOutlineClose,
   AiOutlineBgColors,
   AiOutlineCopy,
 } from "react-icons/ai";
-import { colorSchemes } from "../../constants/colorSchemes";
-import useStore from "../../store/app-state-store.hook";
-import AccordionLayout from "../accordion-layout";
+import {colorSchemes} from "../../constants/colorSchemes";
+import usePollState from "../../store/poll-state.store";
+import AccordionLayout from "../Layouts/accordion-layout";
 import PollBackgroundCard from "./poll-background-card";
-import { VOTE_POSTED, VOTE_FORM_VIEW } from "../../constants/index";
+import {VOTE_POSTED, VOTE_FORM_VIEW} from "../../constants/index";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
-import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { getMinEndDate } from "../../lib/getMinEndDate";
+import {getMinEndDate} from "../../lib/getMinEndDate";
+import {useAxios} from "../../hooks/useAxios.hook";
+import {OptionsList} from "../Lists/OptionsList";
+import {OptionListItem} from "../Lists/OptionsListItem";
 
-// todo: refactor to use useReducer
-const PollForm = ({ setPollView }) => {
+// todo: Refactor save function to use useAxios hook
+const PollForm = ({setPollView}) => {
   // State
-  const { options, pollTitle, settings, colorScheme, background } = useStore();
-  const [saveDisabled, setSaveDisabled] = useState(true);
+  const {
+    options,
+    pollTitle,
+    settings,
+    colorScheme,
+    background,
+    addOption,
+    deleteOption,
+    setColorScheme,
+    pollId
+  } = usePollState();
   const [formState, setFormState] = useState(VOTE_FORM_VIEW);
-  const [isLoading, setIsLoading] = useState(false);
-  const [poll, setPoll] = useState(null);
+  const {fetchData, loading, error} = useAxios();
   const toast = useToast();
 
-  // Use Effect
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      for (const item of options) {
-        if (item?.question?.length === 0) {
-          return setSaveDisabled(true);
-        }
-      }
-
-      setSaveDisabled(false);
-    }, 1250);
-
-    return () => clearTimeout(debounce);
-  }, [options]);
-
   // Handlers
-  const addOptionHandler = () => {
-    setSaveDisabled(true);
-
-    const newArr = [
-      ...options,
-      {
-        id: options.length + 1,
-        question: "",
-      },
-    ];
-
-    useStore.setState({ options: newArr });
-  };
-
-  const deleteOptionHandler = (id) => {
-    const newOptionsArr = options.reduce((acc, curr) => {
-      if (curr.id !== id) acc.push(curr);
-      return acc;
-    }, []);
-
-    useStore.setState({ options: newOptionsArr });
-  };
-
-  const inputHandler = (e, index) => {
-    const val = e.target.value;
+  const inputHandler = (val, index) => {
     const item = options[index];
     const arrCopy = [...options];
 
@@ -94,7 +62,7 @@ const PollForm = ({ setPollView }) => {
 
     arrCopy[index] = item;
 
-    useStore.setState({ options: arrCopy });
+    usePollState.setState({options: arrCopy});
   };
 
   const saveHandler = async () => {
@@ -109,10 +77,10 @@ const PollForm = ({ setPollView }) => {
       }
     }
 
-    try {
-      setIsLoading(true);
-
-      const { data } = await axios.post("/api/poll", {
+    const {poll, questions} = await fetchData({
+      method: "POST",
+      url: '/api/poll',
+      data: {
         title: pollTitle,
         options,
         colorScheme,
@@ -120,34 +88,36 @@ const PollForm = ({ setPollView }) => {
         startDate: settings.startDate,
         endDate: settings.endDate,
         background,
+      }
+    });
+
+    if (!error) {
+      usePollState.setState({
+        settings: {
+          hideVotes: poll.hideVotes,
+          startDate: new Date(poll.startDate).getTime(),
+          endDate: new Date(poll.endDate).getTime(),
+        },
+        colorScheme: poll.colorScheme,
+        pollTitle: poll.title,
+        background: poll.backgroundURL,
+        options: [...questions],
+        pollId: poll.id,
       });
-
-      setPoll({ ...data });
-
       setFormState(VOTE_POSTED);
-    } catch (error) {
+    } else {
       toast({
-        title: error.message,
+        title: error,
         duration: 9000,
         isClosable: true,
         colorScheme: "error",
       });
     }
-
-    setIsLoading(false);
-  };
-
-  const viewPollHandler = () => {
-    setPollView();
-  };
-
-  const setColorScheme = (colorScheme) => {
-    useStore.setState({ colorScheme: colorScheme });
   };
 
   return (
     <>
-      {formState === VOTE_FORM_VIEW && !isLoading && (
+      {formState === VOTE_FORM_VIEW && !loading && (
         <>
           {/* header */}
           <Input
@@ -156,64 +126,33 @@ const PollForm = ({ setPollView }) => {
             placeholder={"Insert title"}
             value={pollTitle}
             onChange={(e) => {
-              useStore.setState({ pollTitle: e.target.value });
+              usePollState.setState({pollTitle: e.target.value});
             }}
             fontWeight={"semibold"}
             fontSize={"xl"}
             letterSpacing={"0.05em"}
             marginBottom={5}
             colorScheme={"yellow"}
-            _focus={{ borderColor: colorScheme, outline: "none" }}
-            _focusVisible={{ boxShadow: `0px 1px 0px 0px ${colorScheme}` }}
+            _focus={{borderColor: colorScheme, outline: "none"}}
+            _focusVisible={{boxShadow: `0px 1px 0px 0px ${colorScheme}`}}
             id={"poll-title"}
           />
           {/* options */}
-          <Flex
-            w={"100%"}
-            as={"section"}
-            flexDir={"column"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            gap={3}
-            id={"options-container"}
-          >
-            {options.map(({ question, id }, index) => (
-              <InputGroup key={id}>
-                <Input
-                  placeholder={"Option " + (index + 1)}
-                  type={"text"}
-                  id={"option" + id}
-                  value={question}
-                  onChange={(e) => inputHandler(e, index)}
-                  _focus={{ borderColor: colorScheme, outline: "none" }}
-                  _focusVisible={{ boxShadow: `0 0 0 1px ${colorScheme}` }}
-                  variant={"outline"}
-                />
-                {options.length > 2 && (
-                  <InputRightElement>
-                    <Button
-                      padding={0}
-                      background={"transparent"}
-                      _hover={{ background: "transparent", color: "red" }}
-                      _active={{ background: "transparent", opacity: 0.75 }}
-                      onClick={() => {
-                        deleteOptionHandler(id);
-                      }}
-                    >
-                      <AiOutlineClose />
-                    </Button>
-                  </InputRightElement>
-                )}
-              </InputGroup>
-            ))}
-          </Flex>
+          <OptionsList options={options} callbackfn={({question, id}, index) => (
+            <OptionListItem key={id} index={index} id={id} value={question}
+                            onChange={(e) => inputHandler(e.target.value, index)} borderColor={colorScheme}
+                            options={options} onClick={() => {
+              deleteOption(id);
+            }}
+            />
+          )}/>
           {/* add option */}
           <Button
             variant={"iconLeft"}
             id={"option-btn"}
-            onClick={addOptionHandler}
+            onClick={addOption}
           >
-            <AiOutlinePlus fontSize={"1.25em"} />
+            <AiOutlinePlus fontSize={"1.25em"}/>
             Add option
           </Button>
           {/* settings */}
@@ -223,8 +162,8 @@ const PollForm = ({ setPollView }) => {
                 colorScheme={colorScheme}
                 isChecked={settings.hideVotes}
                 onChange={(e) =>
-                  useStore.setState({
-                    settings: { ...settings, hideVotes: e.target.checked },
+                  usePollState.setState({
+                    settings: {...settings, hideVotes: e.target.checked},
                   })
                 }
               >
@@ -241,7 +180,7 @@ const PollForm = ({ setPollView }) => {
                   selected={settings.startDate}
                   onChange={(date) => {
                     if (date.getTime() > settings.endDate) {
-                      return useStore.setState({
+                      return usePollState.setState({
                         settings: {
                           ...settings,
                           startDate: date.getTime(),
@@ -250,13 +189,13 @@ const PollForm = ({ setPollView }) => {
                       });
                     }
 
-                    useStore.setState({
-                      settings: { ...settings, startDate: date.getTime() },
+                    usePollState.setState({
+                      settings: {...settings, startDate: date.getTime()},
                     });
                   }}
                 />
               </Box>
-              <Box paddingLeft={0.5}>
+              <Box paddingLeft={0.5} paddingBottom={0.5}>
                 <Text fontSize={"sm"} fontWeight={"bold"}>
                   End Date
                 </Text>
@@ -265,28 +204,28 @@ const PollForm = ({ setPollView }) => {
                   minDate={getMinEndDate(settings.startDate)}
                   selected={settings.endDate}
                   onChange={(date) =>
-                    useStore.setState({
-                      settings: { ...settings, endDate: date.getTime() },
+                    usePollState.setState({
+                      settings: {...settings, endDate: date.getTime()},
                     })
                   }
                 />
               </Box>
             </Stack>
           </AccordionLayout>
-          <Divider borderWidth={"1px"} />
+          <Divider borderWidth={"1px"}/>
           {/* color scheme */}
           <Menu>
             <MenuButton
               padding={0}
               background={"transparent"}
-              _hover={{ background: "transparent", opacity: 1 }}
-              _active={{ background: "transparent", opacity: 0.75 }}
+              _hover={{background: "transparent", opacity: 1}}
+              _active={{background: "transparent", opacity: 0.75}}
               opacity={0.5}
               textAlign={"left"}
               as={Button}
             >
               <Flex gap={3}>
-                <AiOutlineBgColors fontSize={"1.25em"} /> Color Scheme
+                <AiOutlineBgColors fontSize={"1.25em"}/> Color Scheme
               </Flex>
             </MenuButton>
             <MenuList>
@@ -309,7 +248,7 @@ const PollForm = ({ setPollView }) => {
             </MenuList>
           </Menu>
           {/* Background */}
-          <PollBackgroundCard />
+          <PollBackgroundCard/>
           {/* View user view button */}
           <Flex justifyContent={"space-between"} gap={5}>
             <Button
@@ -318,7 +257,7 @@ const PollForm = ({ setPollView }) => {
               paddingY={"1.5rem"}
               id={"user-view-btn"}
               variant={"ghost"}
-              onClick={viewPollHandler}
+              onClick={() => setPollView()}
             >
               View Poll
             </Button>
@@ -326,7 +265,6 @@ const PollForm = ({ setPollView }) => {
             {/* Save button */}
             <Button
               width={"100%"}
-              isDisabled={saveDisabled}
               paddingY={"1.5rem"}
               colorScheme={colorScheme}
               mt={4}
@@ -339,7 +277,7 @@ const PollForm = ({ setPollView }) => {
         </>
       )}
 
-      {isLoading && (
+      {loading && (
         <PollLoading
           colorScheme={colorScheme}
           heading={"Constructing your new poll..."}
@@ -350,7 +288,7 @@ const PollForm = ({ setPollView }) => {
         <PollConfirmation colorScheme={colorScheme} title={"Poll Created"}>
           <>
             <Text fontSize={"1.2em"}>
-              <Link href={`/polls/${poll.poll.id}`}>View Live Poll</Link>
+              <Link href={`/polls/${pollId}`}>View Live Poll</Link>
               <Tooltip label={"Copy to Clipboard"}>
                 <Button
                   background={"transparent"}
@@ -358,7 +296,7 @@ const PollForm = ({ setPollView }) => {
                   fontSize={"1.25em"}
                   onClick={() => {
                     navigator.clipboard.writeText(
-                      `localhost:3000/polls/${poll.id}`
+                      `localhost:3000/polls/${pollId}`
                     );
                     toast({
                       title: "Copied link to clipboard",
@@ -368,7 +306,7 @@ const PollForm = ({ setPollView }) => {
                     });
                   }}
                 >
-                  <AiOutlineCopy color={colorScheme} />
+                  <AiOutlineCopy color={colorScheme}/>
                 </Button>
               </Tooltip>
             </Text>

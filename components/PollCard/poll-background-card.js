@@ -7,24 +7,24 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { MdOutlineWallpaper } from "react-icons/md";
-import { backgrounds } from "../../constants/backgrounds";
-import useStore from "../../store/app-state-store.hook";
+import {MdOutlineWallpaper} from "react-icons/md";
+import {backgrounds} from "../../constants/backgrounds";
+import usePollState from "../../store/poll-state.store";
 
 const PollBackgroundCard = () => {
-  const { isOpen, onToggle } = useDisclosure();
+  const {isOpen, onToggle} = useDisclosure();
 
   return (
     <>
       <Button variant={"iconLeft"} onClick={onToggle}>
-        <MdOutlineWallpaper />
+        <MdOutlineWallpaper/>
         Background
       </Button>
-      <Divider borderWidth={"1px"} />
+      <Divider borderWidth={"1px"}/>
       <Slide
         direction={"right"}
         in={isOpen}
-        style={{ zIndex: 10 }}
+        style={{zIndex: 10}}
         onClick={onToggle}
       >
         <SimpleGrid
@@ -56,7 +56,7 @@ const PollBackgroundCard = () => {
               boxShadow: "1px 1px 2px #d9d9d9 inset",
             }}
             onClick={() => {
-              useStore.setState({ background: "" });
+              usePollState.setState({background: ""});
             }}
             padding={2}
             mt={2}
@@ -67,7 +67,7 @@ const PollBackgroundCard = () => {
           {backgrounds.map((item, id) => (
             <Box
               onClick={() => {
-                useStore.setState({ background: item.path });
+                usePollState.setState({background: item.path});
               }}
               _hover={{
                 background: "#F8F8F8",

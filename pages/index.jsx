@@ -1,16 +1,17 @@
-import {Button, Flex} from "@chakra-ui/react";
+import {Button,} from "@chakra-ui/react";
 import Head from "next/head";
 import {useState} from "react";
 import PollForm from "../components/PollCard/poll-form";
-import PollLayout from "../components/PollCard/poll-layout";
+import PollLayout from "../components/Layouts/poll-layout";
 import PollUser from "../components/PollCard/poll-user";
 import {AiOutlineArrowLeft} from "react-icons/ai";
 import {VOTE_USER_VIEW, VOTE_FORM_VIEW} from "../constants/index";
-import useStore from "../store/app-state-store.hook";
+import usePollState from "../store/poll-state.store";
+import MainLayout from "../components/Layouts/main-layout";
 
 export default function Home() {
   const [pollView, setPollView] = useState(VOTE_FORM_VIEW);
-  const {colorScheme, background} = useStore();
+  const {colorScheme, background} = usePollState();
 
   return (
     <>
@@ -20,17 +21,8 @@ export default function Home() {
         <meta name='viewport' content='width=device-width, initial-scale=1'/>
         <link rel='icon' href='/favicon.ico'/>
       </Head>
-      <Flex
-        as={"main"}
-        h={"100vh"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        flexDir={"column"}
-        gap={5}
-        background={`url(${background})`}
-        backgroundSize={"cover"}
-        backgroundRepeat={"no-repeat"}
-        backgroundPosition={"center"}
+      <MainLayout
+        backgroundURL={background}
       >
         {pollView === VOTE_USER_VIEW && (
           <Button
@@ -54,7 +46,7 @@ export default function Home() {
             <PollUser previewMode={true}/>
           )}
         </PollLayout>
-      </Flex>
+      </MainLayout>
     </>
   );
 }

@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import PollOptionItem from "./poll-option-item";
-import useStore from "../../store/app-state-store.hook";
+import usePollState from "../../store/poll-state.store";
 import {VOTE_PENDING, VOTE_SENT} from "../../constants/index";
 import {useState, useEffect} from "react";
 import PollLoading from "./poll-loading";
@@ -19,7 +19,7 @@ import {usePoll} from "../../hooks/usePoll.hook";
 
 const PollUser = ({previewMode}) => {
   const [voteStatus, setVoteStatus] = useState(VOTE_PENDING);
-  const {options, pollTitle, colorScheme, settings, pollId} = useStore();
+  const {options, pollTitle, colorScheme, settings, pollId} = usePollState();
   const {isOpen, onToggle} = useDisclosure();
   const {castVote, totalVotes, hasPollStarted, hasPollEnded, loading, error} = usePoll(options, settings, pollId);
 
