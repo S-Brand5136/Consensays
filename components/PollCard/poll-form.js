@@ -15,28 +15,27 @@ import {
   Tooltip,
   useToast,
 } from "@chakra-ui/react";
-import {useState} from "react";
+import { useState } from "react";
 import {
-  AiOutlinePlus,
   AiOutlineBgColors,
   AiOutlineCopy,
+  AiOutlinePlus,
 } from "react-icons/ai";
-import {colorSchemes} from "../../constants/colorSchemes";
+import { colorSchemes } from "../../constants/colorSchemes";
 import usePollState from "../../store/poll-state.store";
 import AccordionLayout from "../Layouts/accordion-layout";
 import PollBackgroundCard from "./poll-background-card";
-import {VOTE_POSTED, VOTE_FORM_VIEW} from "../../constants/index";
+import { VOTE_FORM_VIEW, VOTE_POSTED } from "../../constants/index";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {getMinEndDate} from "../../lib/getMinEndDate";
-import {useAxios} from "../../hooks/useAxios.hook";
-import {OptionsList} from "../Lists/OptionsList";
-import {OptionListItem} from "../Lists/OptionsListItem";
+import { getMinEndDate } from "../../lib/getMinEndDate";
+import { useAxios } from "../../hooks/useAxios.hook";
+import { OptionsList } from "../Lists/options-list";
+import { OptionListItem } from "../Lists/options-list-item";
 
-// todo: Refactor save function to use useAxios hook
-const PollForm = ({setPollView}) => {
+const PollForm = ({ setPollView }) => {
   // State
   const {
     options,
@@ -47,10 +46,10 @@ const PollForm = ({setPollView}) => {
     addOption,
     deleteOption,
     setColorScheme,
-    pollId
+    pollId,
   } = usePollState();
   const [formState, setFormState] = useState(VOTE_FORM_VIEW);
-  const {fetchData, loading, error} = useAxios();
+  const { fetchData, loading, error } = useAxios();
   const toast = useToast();
 
   // Handlers
@@ -62,7 +61,7 @@ const PollForm = ({setPollView}) => {
 
     arrCopy[index] = item;
 
-    usePollState.setState({options: arrCopy});
+    usePollState.setState({ options: arrCopy });
   };
 
   const saveHandler = async () => {
@@ -77,9 +76,9 @@ const PollForm = ({setPollView}) => {
       }
     }
 
-    const {poll, questions} = await fetchData({
+    const { poll, questions } = await fetchData({
       method: "POST",
-      url: '/api/poll',
+      url: "/api/poll",
       data: {
         title: pollTitle,
         options,
@@ -88,7 +87,7 @@ const PollForm = ({setPollView}) => {
         startDate: settings.startDate,
         endDate: settings.endDate,
         background,
-      }
+      },
     });
 
     if (!error) {
@@ -126,33 +125,38 @@ const PollForm = ({setPollView}) => {
             placeholder={"Insert title"}
             value={pollTitle}
             onChange={(e) => {
-              usePollState.setState({pollTitle: e.target.value});
+              usePollState.setState({ pollTitle: e.target.value });
             }}
             fontWeight={"semibold"}
             fontSize={"xl"}
             letterSpacing={"0.05em"}
             marginBottom={5}
             colorScheme={"yellow"}
-            _focus={{borderColor: colorScheme, outline: "none"}}
-            _focusVisible={{boxShadow: `0px 1px 0px 0px ${colorScheme}`}}
+            _focus={{ borderColor: colorScheme, outline: "none" }}
+            _focusVisible={{ boxShadow: `0px 1px 0px 0px ${colorScheme}` }}
             id={"poll-title"}
           />
           {/* options */}
-          <OptionsList options={options} callbackfn={({question, id}, index) => (
-            <OptionListItem key={id} index={index} id={id} value={question}
-                            onChange={(e) => inputHandler(e.target.value, index)} borderColor={colorScheme}
-                            options={options} onClick={() => {
-              deleteOption(id);
-            }}
-            />
-          )}/>
+          <OptionsList
+            options={options}
+            callbackfn={({ question, id }, index) => (
+              <OptionListItem
+                key={id}
+                index={index}
+                id={id}
+                value={question}
+                onChange={(e) => inputHandler(e.target.value, index)}
+                borderColor={colorScheme}
+                options={options}
+                onClick={() => {
+                  deleteOption(id);
+                }}
+              />
+            )}
+          />
           {/* add option */}
-          <Button
-            variant={"iconLeft"}
-            id={"option-btn"}
-            onClick={addOption}
-          >
-            <AiOutlinePlus fontSize={"1.25em"}/>
+          <Button variant={"iconLeft"} id={"option-btn"} onClick={addOption}>
+            <AiOutlinePlus fontSize={"1.25em"} />
             Add option
           </Button>
           {/* settings */}
@@ -163,7 +167,7 @@ const PollForm = ({setPollView}) => {
                 isChecked={settings.hideVotes}
                 onChange={(e) =>
                   usePollState.setState({
-                    settings: {...settings, hideVotes: e.target.checked},
+                    settings: { ...settings, hideVotes: e.target.checked },
                   })
                 }
               >
@@ -190,7 +194,7 @@ const PollForm = ({setPollView}) => {
                     }
 
                     usePollState.setState({
-                      settings: {...settings, startDate: date.getTime()},
+                      settings: { ...settings, startDate: date.getTime() },
                     });
                   }}
                 />
@@ -205,27 +209,27 @@ const PollForm = ({setPollView}) => {
                   selected={settings.endDate}
                   onChange={(date) =>
                     usePollState.setState({
-                      settings: {...settings, endDate: date.getTime()},
+                      settings: { ...settings, endDate: date.getTime() },
                     })
                   }
                 />
               </Box>
             </Stack>
           </AccordionLayout>
-          <Divider borderWidth={"1px"}/>
+          <Divider borderWidth={"1px"} />
           {/* color scheme */}
           <Menu>
             <MenuButton
               padding={0}
               background={"transparent"}
-              _hover={{background: "transparent", opacity: 1}}
-              _active={{background: "transparent", opacity: 0.75}}
+              _hover={{ background: "transparent", opacity: 1 }}
+              _active={{ background: "transparent", opacity: 0.75 }}
               opacity={0.5}
               textAlign={"left"}
               as={Button}
             >
               <Flex gap={3}>
-                <AiOutlineBgColors fontSize={"1.25em"}/> Color Scheme
+                <AiOutlineBgColors fontSize={"1.25em"} /> Color Scheme
               </Flex>
             </MenuButton>
             <MenuList>
@@ -248,7 +252,7 @@ const PollForm = ({setPollView}) => {
             </MenuList>
           </Menu>
           {/* Background */}
-          <PollBackgroundCard/>
+          <PollBackgroundCard />
           {/* View user view button */}
           <Flex justifyContent={"space-between"} gap={5}>
             <Button
@@ -306,7 +310,7 @@ const PollForm = ({setPollView}) => {
                     });
                   }}
                 >
-                  <AiOutlineCopy color={colorScheme}/>
+                  <AiOutlineCopy color={colorScheme} />
                 </Button>
               </Tooltip>
             </Text>

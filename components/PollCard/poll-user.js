@@ -10,18 +10,19 @@ import {
 } from "@chakra-ui/react";
 import PollOptionItem from "./poll-option-item";
 import usePollState from "../../store/poll-state.store";
-import {VOTE_PENDING, VOTE_SENT} from "../../constants/index";
-import {useState, useEffect} from "react";
+import { VOTE_PENDING, VOTE_SENT } from "../../constants/index";
+import { useEffect, useState } from "react";
 import PollLoading from "./poll-loading";
 import PollConfirmation from "./poll-confirmation";
 import Moment from "react-moment";
-import {usePoll} from "../../hooks/usePoll.hook";
+import { usePoll } from "../../hooks/usePoll.hook";
 
-const PollUser = ({previewMode}) => {
+const PollUser = ({ previewMode }) => {
   const [voteStatus, setVoteStatus] = useState(VOTE_PENDING);
-  const {options, pollTitle, colorScheme, settings, pollId} = usePollState();
-  const {isOpen, onToggle} = useDisclosure();
-  const {castVote, totalVotes, hasPollStarted, hasPollEnded, loading, error} = usePoll(options, settings, pollId);
+  const { options, pollTitle, colorScheme, settings, pollId } = usePollState();
+  const { isOpen, onToggle } = useDisclosure();
+  const { castVote, totalVotes, hasPollStarted, hasPollEnded, loading, error } =
+    usePoll(options, settings, pollId);
 
   useEffect(() => {
     const pollsVotedOn = JSON.parse(localStorage.getItem("pollsVotedOn"));
@@ -41,13 +42,16 @@ const PollUser = ({previewMode}) => {
     }
 
     await castVote(id);
-    setVoteStatus(VOTE_SENT);
-  }
+
+    if (!error) {
+      setVoteStatus(VOTE_SENT);
+    }
+  };
 
   const getOptionList = () => {
     return (
       <SimpleGrid gap={10} paddingX={4} paddingBottom={6}>
-        {options.map(({id, question, votes}) => (
+        {options.map(({ id, question, votes }) => (
           <PollOptionItem
             colorScheme={colorScheme}
             key={id}
@@ -85,12 +89,12 @@ const PollUser = ({previewMode}) => {
             {hasPollStarted ? (
               <Text>
                 {hasPollEnded ? "Poll ended on " : "Poll ends on: "}
-                <Moment format='YY/MM/DD'>{settings.endDate}</Moment>
+                <Moment format="YY/MM/DD">{settings.endDate}</Moment>
               </Text>
             ) : (
               <Text>
                 Poll starts on:{" "}
-                <Moment format='YY/MM/DD'>{settings.startDate}</Moment>
+                <Moment format="YY/MM/DD">{settings.startDate}</Moment>
               </Text>
             )}
           </Flex>
@@ -112,8 +116,8 @@ const PollUser = ({previewMode}) => {
           padding={10}
           gap={5}
         >
-          <Box fontSize={'xx-large'}>😔</Box>
-          <Heading fontSize={'x-large'}>{error}</Heading>
+          <Box fontSize={"xx-large"}>😔</Box>
+          <Heading fontSize={"x-large"}>{error}</Heading>
         </Flex>
       )}
 
@@ -127,7 +131,7 @@ const PollUser = ({previewMode}) => {
           >
             View Results
           </Button>
-          <Collapse style={{width: "100%"}} in={isOpen} animateOpacity>
+          <Collapse style={{ width: "100%" }} in={isOpen} animateOpacity>
             {getOptionList()}
           </Collapse>
         </PollConfirmation>
