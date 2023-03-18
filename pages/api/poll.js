@@ -3,18 +3,18 @@ import prisma from "../../lib/prisma";
 export default async function handler(req, res) {
   switch (req.method) {
     /*
-                POST: a new poll to the db
-                BODY: {
-                  title:          required | string
-                  options:        required | array    [ question ]
-                  colorScheme:    optional | string,  defaults to blue
-                  hideVotes:      optional | boolean, defaults to false
-                  startDate:      required | UTC date
-                  endDate:      required | UTC date
-                  backgroundURL:  optional | string,  defaults to empty
-                }
-                URL: posts/[id]
-              */
+            POST: a new poll to the db
+            BODY: {
+              title:          required | string
+              options:        required | array    [ question ]
+              colorScheme:    optional | string,  defaults to blue
+              hideVotes:      optional | boolean, defaults to false
+              startDate:      required | UTC date
+              endDate:      required | UTC date
+              backgroundURL:  optional | string,  defaults to empty
+            }
+            URL: posts/[id]
+                  */
     case "POST":
       try {
         const {

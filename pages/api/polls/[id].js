@@ -3,12 +3,12 @@ import prisma from "../../../lib/prisma";
 export default async function handler(req, res) {
   switch (req.method) {
     /*
-    GET: send back the post that matches the ID
-    QUERY: {
-      id: required | string <poll id>
-    }
-    URL: posts/[id]
-    */
+            GET: send back the poll that matches the ID
+            QUERY: {
+              id: required | string <poll id>
+            }
+            URL: polls/[id]
+            */
     case "GET":
       try {
         const { id } = req.query;
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
         });
       }
     default:
-      res.setHeader("Allow", ["GET", "PUT"]);
+      res.setHeader("Allow", ["GET"]);
       res.status(405).end("");
   }
 }
