@@ -5,7 +5,6 @@ import {
   Divider,
   Flex,
   Input,
-  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -34,6 +33,7 @@ import { getMinEndDate } from "../../lib/getMinEndDate";
 import { useAxios } from "../../hooks/useAxios.hook";
 import { OptionsList } from "../Lists/options-list";
 import { OptionListItem } from "../Lists/options-list-item";
+import Link from "next/link";
 
 const PollForm = ({ setPollView }) => {
   // State
@@ -290,31 +290,38 @@ const PollForm = ({ setPollView }) => {
 
       {formState === VOTE_POSTED && (
         <PollConfirmation colorScheme={colorScheme} title={"Poll Created"}>
-          <>
-            <Text fontSize={"1.2em"}>
-              <Link href={`/polls/${pollId}`}>View Live Poll</Link>
-              <Tooltip label={"Copy to Clipboard"}>
-                <Button
-                  background={"transparent"}
-                  marginLeft={10}
-                  fontSize={"1.25em"}
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      `localhost:3000/polls/${pollId}`
-                    );
-                    toast({
-                      title: "Copied link to clipboard",
-                      duration: 9000,
-                      isClosable: true,
-                      colorScheme: colorScheme,
-                    });
-                  }}
-                >
-                  <AiOutlineCopy color={colorScheme} />
-                </Button>
-              </Tooltip>
-            </Text>
-          </>
+          <Flex justifyContent={"center"} alignItems={"center"}>
+            <Box
+              padding={2}
+              borderRadius={8}
+              _hover={{ background: colorScheme + ".500", color: "white" }}
+            >
+              <Link fontSize={"1.2em"} href={`/polls/${pollId}`}>
+                View Live Poll
+              </Link>
+            </Box>
+            <Tooltip label={"Copy to Clipboard"}>
+              <Button
+                background={"transparent"}
+                marginLeft={10}
+                fontSize={"1.25em"}
+                _hover={{ background: colorScheme + ".500", color: "white" }}
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `localhost:3000/polls/${pollId}`
+                  );
+                  toast({
+                    title: "Copied link to clipboard",
+                    duration: 9000,
+                    isClosable: true,
+                    colorScheme: colorScheme,
+                  });
+                }}
+              >
+                <AiOutlineCopy _hover={{ color: "white" }} />
+              </Button>
+            </Tooltip>
+          </Flex>
         </PollConfirmation>
       )}
     </>

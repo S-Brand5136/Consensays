@@ -7,40 +7,40 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import {MdOutlineWallpaper} from "react-icons/md";
-import {backgrounds} from "../../constants/backgrounds";
+import { MdOutlineWallpaper } from "react-icons/md";
+import { backgrounds } from "../../constants/backgrounds";
 import usePollState from "../../store/poll-state.store";
 
 const PollBackgroundCard = () => {
-  const {isOpen, onToggle} = useDisclosure();
+  const { isOpen, onToggle } = useDisclosure();
 
   return (
     <>
       <Button variant={"iconLeft"} onClick={onToggle}>
-        <MdOutlineWallpaper/>
+        <MdOutlineWallpaper />
         Background
       </Button>
-      <Divider borderWidth={"1px"}/>
+      <Divider borderWidth={"1px"} />
       <Slide
         direction={"right"}
         in={isOpen}
-        style={{zIndex: 10}}
+        style={{ zIndex: 10 }}
         onClick={onToggle}
       >
         <SimpleGrid
           position={"absolute"}
-          right={0}
           top={"25%"}
           bottom={"25%"}
           left={0}
+          right={0}
           marginLeft={"auto"}
           marginRight={"auto"}
           width={"20rem"}
           h={"20rem"}
           overflowY={"scroll"}
-          p='40px'
-          bg='white'
-          rounded='md'
+          p="40px"
+          bg="white"
+          rounded="md"
           boxShadow={"1px 2px 5px gray"}
           columns={2}
           gap={5}
@@ -56,7 +56,7 @@ const PollBackgroundCard = () => {
               boxShadow: "1px 1px 2px #d9d9d9 inset",
             }}
             onClick={() => {
-              usePollState.setState({background: ""});
+              usePollState.setState({ background: "" });
             }}
             padding={2}
             mt={2}
@@ -67,7 +67,7 @@ const PollBackgroundCard = () => {
           {backgrounds.map((item, id) => (
             <Box
               onClick={() => {
-                usePollState.setState({background: item.path});
+                usePollState.setState({ background: item.path });
               }}
               _hover={{
                 background: "#F8F8F8",
