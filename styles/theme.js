@@ -1,4 +1,4 @@
-import {extendTheme} from "@chakra-ui/react";
+import { extendTheme, theme as chakraTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
   config: {
@@ -16,7 +16,7 @@ const theme = extendTheme({
     Button: {
       variants: {
         iconLeft: {
-          _hover: {background: "transparent", opacity: 1},
+          _hover: { background: "transparent", opacity: 1 },
           display: "flex",
           justifyContent: "flex-start",
           gap: 2,

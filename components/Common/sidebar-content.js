@@ -5,14 +5,10 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import {
-  FiCompass,
-  FiHome,
-  FiSettings,
-  FiStar,
-  FiTrendingUp,
-} from "react-icons/fi";
+import { FiCompass, FiHome } from "react-icons/fi";
 import { NavItem } from "./nav-item";
+import { useRouter } from "next/router";
+import usePollState from "../../store/poll-state.store";
 
 const LinkItems = [
   { name: "Home", icon: FiHome, href: "/" },
@@ -20,6 +16,9 @@ const LinkItems = [
 ];
 
 export const SidebarContent = ({ onClose, ...rest }) => {
+  const router = useRouter();
+  const { colorScheme } = usePollState();
+
   return (
     <Box
       transition="3s ease"
@@ -33,12 +32,20 @@ export const SidebarContent = ({ onClose, ...rest }) => {
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Consensays
+          Consen
+          <Text as={"span"} color={colorScheme + ".500"}>
+            says
+          </Text>
         </Text>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem href={link.href} key={link.name} icon={link.icon}>
+        <NavItem
+          href={link.href}
+          highlight={router.pathname === link.href}
+          key={link.name}
+          icon={link.icon}
+        >
           {link.name}
         </NavItem>
       ))}

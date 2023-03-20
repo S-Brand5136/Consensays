@@ -2,7 +2,7 @@ import { Flex, Icon } from "@chakra-ui/react";
 import usePollState from "../../store/poll-state.store";
 import Link from "next/link";
 
-export const NavItem = ({ icon, children, href, ...rest }) => {
+export const NavItem = ({ icon, children, highlight, href, ...rest }) => {
   const { colorScheme } = usePollState();
 
   return (
@@ -18,9 +18,12 @@ export const NavItem = ({ icon, children, href, ...rest }) => {
         borderRadius="lg"
         role="group"
         cursor="pointer"
+        bg={highlight && `${colorScheme}.500`}
+        color={highlight && "white"}
         _hover={{
           bg: `${colorScheme}.500`,
           color: "white",
+          opacity: 0.5,
         }}
         {...rest}
       >
