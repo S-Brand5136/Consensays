@@ -46,6 +46,7 @@ export const MobileNav = ({ onOpen, auth, ...rest }) => {
         fontSize="2xl"
         fontFamily="monospace"
         fontWeight="bold"
+        color={useColorModeValue("initial", "white")}
       >
         Consen
         <Text as={"span"} color={colorScheme + ".500"}>
@@ -61,7 +62,10 @@ export const MobileNav = ({ onOpen, auth, ...rest }) => {
           onClick={toggleColorMode}
           icon={colorMode === "light" ? <FiSun /> : <FiMoon />}
         />
-        <Flex alignItems={"center"}>
+        <Flex
+          alignItems={"center"}
+          color={useColorModeValue("initial", "white")}
+        >
           {!auth ? (
             <>
               <Link style={{ marginRight: "1rem" }} href={"/auth/login"}>

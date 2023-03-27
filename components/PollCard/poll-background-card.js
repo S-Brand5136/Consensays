@@ -4,6 +4,7 @@ import {
   Divider,
   SimpleGrid,
   Slide,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import Image from "next/image";
@@ -47,6 +48,7 @@ const PollBackgroundCard = () => {
           onClick={(e) => {
             e.stopPropagation();
           }}
+          background={useColorModeValue("white", "gray.800")}
         >
           <Box
             background={"#F8F8F8"}

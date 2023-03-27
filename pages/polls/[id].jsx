@@ -56,7 +56,7 @@ export async function getStaticProps({ params }) {
   };
 }
 
-const Poll = ({ poll }) => {
+function Poll({ poll }) {
   useEffect(() => {
     usePollState.setState({
       settings: {
@@ -87,6 +87,6 @@ const Poll = ({ poll }) => {
       </MainLayout>
     </>
   );
-};
+}
 
 export default Poll;

@@ -1,12 +1,12 @@
-import { Flex } from "@chakra-ui/react";
-import React from "react";
+import { Flex, useColorModeValue } from "@chakra-ui/react";
 
 const PollLayout = ({ children, pollSaved }) => {
   return (
     <Flex
       flexDirection={"column"}
       boxShadow={"1px 2px 5px gray"}
-      background={"white"}
+      background={useColorModeValue("white", "gray.800")}
+      color={useColorModeValue("initial", "white")}
       minW={"sm"}
       borderRadius={8}
       paddingY={5}
