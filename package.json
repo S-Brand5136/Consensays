@@ -14,7 +14,8 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@next/font": "13.1.1",
-    "@prisma/client": "^4.9.0",
+    "@prisma/client": "^4.11.0",
+    "@supabase/supabase-js": "^2.12.1",
     "axios": "^1.2.3",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
@@ -30,6 +31,6 @@
   "devDependencies": {
     "cypress": "^12.3.0",
     "prettier": "^2.8.4",
-    "prisma": "^4.9.0"
+    "prisma": "^4.11.0"
   }
 }
