@@ -1,7 +1,6 @@
 import Head from "next/head";
 import MainLayout from "../components/Layouts/main-layout";
 import {
-  Box,
   Button,
   Flex,
   FormControl,
@@ -11,15 +10,14 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Stack,
-  useColorMode,
+  Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
 import prisma from "../lib/prisma";
 import usePollState from "../store/poll-state.store";
-import { useState } from "react";
-import { FiChevronDown } from "react-icons/fi";
+import { FiChevronDown, FiRefreshCcw } from "react-icons/fi";
 import PollsTable from "../components/polls-table";
+import { usePagination } from "../hooks/usePagination.hook";
 
 export async function getStaticProps({}) {
   const polls = JSON.stringify(await prisma.poll.findMany());
@@ -31,9 +29,19 @@ export async function getStaticProps({}) {
   };
 }
 
-const Explore = ({ polls }) => {
+function Explore({ polls }) {
   const { colorScheme } = usePollState();
-  const [filterBy, setFilterBy] = useState("Newest");
+  const {
+    next,
+    prev,
+    searchByTitle,
+    reset,
+    currentItems,
+    maxPage,
+    currentPage,
+    filterBy,
+    setFilterBy,
+  } = usePagination(JSON.parse(polls), 10, 1);
 
   return (
     <>
@@ -41,7 +49,8 @@ const Explore = ({ polls }) => {
         <title>Explore</title>
       </Head>
       <MainLayout>
-        <Box
+        <Flex
+          flexDir={"column"}
           minH={"90%"}
           minWidth={"90%"}
           borderRadius={8}
@@ -71,9 +80,8 @@ const Explore = ({ polls }) => {
                 onClick={(e) => setFilterBy(e.target.textContent)}
               >
                 <MenuItem>Newest</MenuItem>
-                <MenuItem>Oldest - On Going</MenuItem>
-                <MenuItem>Recently Ended</MenuItem>
-                <MenuItem>Oldest - Ended</MenuItem>
+                <MenuItem>Hidden Votes</MenuItem>
+                <MenuItem>Oldest</MenuItem>
               </MenuList>
             </Menu>
             <HStack
@@ -82,19 +90,8 @@ const Explore = ({ polls }) => {
               spacing={"12px"}
               onSubmit={(e) => {
                 e.preventDefault();
-                // setError(false);
-                // setState('submitting');
-
-                // remove this code and implement your submit logic right here
-                // setTimeout(() => {
-                //     if (email === 'fail@example.com') {
-                //         setError(true);
-                //         setState('initial');
-                //         return;
-                //     }
-                //
-                //     setState('success');
-                // }, 1000);
+                searchByTitle(e.target.search.value);
+                e.target.search.value = "";
               }}
             >
               <FormControl>
@@ -118,13 +115,44 @@ const Explore = ({ polls }) => {
                   Search
                 </Button>
               </FormControl>
+              <Tooltip label={"Reset Polls"} aria-label={"Reset Polls"}>
+                <Button
+                  type={"button"}
+                  colorScheme={colorScheme}
+                  fontSize={24}
+                  onClick={reset}
+                >
+                  <FiRefreshCcw />
+                </Button>
+              </Tooltip>
             </HStack>
           </Flex>
-          <PollsTable />
-        </Box>
+          <PollsTable polls={currentItems} />
+          <HStack
+            paddingRight={10}
+            marginTop={10}
+            justifyContent={"end"}
+            width={"100%"}
+          >
+            <Button
+              isDisabled={maxPage <= currentPage}
+              onClick={prev}
+              colorScheme={colorScheme}
+            >
+              Prev
+            </Button>
+            <Button
+              isDisabled={maxPage === currentPage}
+              onClick={next}
+              colorScheme={colorScheme}
+            >
+              Next
+            </Button>
+          </HStack>
+        </Flex>
       </MainLayout>
     </>
   );
-};
+}
 
 export default Explore;
