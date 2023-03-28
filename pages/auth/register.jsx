@@ -16,8 +16,21 @@ import { useState } from "react";
 import MainLayout from "../../components/Layouts/main-layout";
 import { GrFormView, GrFormViewHide } from "react-icons/gr";
 import Link from "next/link";
+import { signIn, getCsrfToken, getProviders } from "next-auth/react";
+import { getServerSession } from "next-auth";
 
-function Register() {
+export async function getServerSideProps(context) {
+  const providers = await getProviders();
+  const csrfToken = await getCsrfToken(context);
+  return {
+    props: {
+      providers,
+      csrfToken,
+    },
+  };
+}
+
+function Register({ csrfToken, providers }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -103,6 +116,18 @@ function Register() {
               </Text>
             </Stack>
           </Stack>
+          {providers &&
+            Object.values(providers).map((provider) => (
+              <Button
+                mt={5}
+                w={"full"}
+                key={provider.name}
+                colorScheme={"green"}
+                onClick={() => signIn(provider.id)}
+              >
+                Sign in with {provider.name}
+              </Button>
+            ))}
         </Box>
       </Stack>
     </MainLayout>

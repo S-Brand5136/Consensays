@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Flex,
   HStack,
@@ -16,10 +17,12 @@ import {
 import { FiChevronDown, FiMenu, FiMoon, FiSun } from "react-icons/fi";
 import usePollState from "../../store/poll-state.store";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 
-export const MobileNav = ({ onOpen, auth, ...rest }) => {
+export const MobileNav = ({ onOpen, ...rest }) => {
   const { colorScheme } = usePollState();
   const { colorMode, toggleColorMode } = useColorMode();
+  const { data: session } = useSession();
 
   return (
     <Flex
@@ -66,12 +69,12 @@ export const MobileNav = ({ onOpen, auth, ...rest }) => {
           alignItems={"center"}
           color={useColorModeValue("initial", "white")}
         >
-          {!auth ? (
+          {!session ? (
             <>
               <Link style={{ marginRight: "1rem" }} href={"/auth/login"}>
                 Login
               </Link>
-              <Link href={"/auth/register"}>Register</Link>
+              {/*<Link href={"/auth/register"}>Register</Link>*/}
             </>
           ) : (
             <Menu>
@@ -81,6 +84,7 @@ export const MobileNav = ({ onOpen, auth, ...rest }) => {
                 _focus={{ boxShadow: "none" }}
               >
                 <HStack>
+                  <Avatar size={"sm"} src={session.user.image} />
                   <VStack
                     display={{ base: "none", md: "flex" }}
                     alignItems="flex-start"
@@ -88,13 +92,13 @@ export const MobileNav = ({ onOpen, auth, ...rest }) => {
                     ml="2"
                     color={useColorModeValue("initial", "white")}
                   >
-                    <Text fontSize="sm">Justina Clark</Text>
-                    <Text
-                      fontSize="xs"
-                      color={useColorModeValue("gray.600", "gray.300")}
-                    >
-                      Admin
-                    </Text>
+                    <Text fontSize="sm">{session.user.name}</Text>
+                    {/*<Text*/}
+                    {/*  fontSize="xs"*/}
+                    {/*  color={useColorModeValue("gray.600", "gray.300")}*/}
+                    {/*>*/}
+                    {/*  Admin*/}
+                    {/*</Text>*/}
                   </VStack>
                   <Box display={{ base: "none", md: "flex" }}>
                     <FiChevronDown />
@@ -102,11 +106,11 @@ export const MobileNav = ({ onOpen, auth, ...rest }) => {
                 </HStack>
               </MenuButton>
               <MenuList color={useColorModeValue("initial", "gray.200")}>
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Settings</MenuItem>
-                <MenuItem>Billing</MenuItem>
+                <Link href={"/profile"}>
+                  <MenuItem>Profile</MenuItem>
+                </Link>
                 <MenuDivider />
-                <MenuItem>Sign out</MenuItem>
+                <MenuItem onClick={() => signOut()}>Log out</MenuItem>
               </MenuList>
             </Menu>
           )}
